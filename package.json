@@ -1,14 +1,14 @@
 {
-	"name": "obsidian-sample-plugin",
-	"version": "0.12.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
-	"main": "main.js",
+	"name": "obsidian-floating-toc-plugin",
+	"version": "",
+	"description": "Obsidian Floating Table of Contents Plugin",
+	"main": "src/main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "node esbuild.config.mjs production"
 	},
 	"keywords": [],
-	"author": "",
+	"author": "Curt Grimes",
 	"license": "MIT",
 	"devDependencies": {
 		"@types/node": "^16.11.6",
@@ -19,5 +19,10 @@
 		"obsidian": "^0.12.17",
 		"tslib": "2.3.1",
 		"typescript": "4.4.4"
+	},
+	"dependencies": {
+		"esbuild-plugin-vue3": "^0.3.0",
+		"sass": "^1.47.0",
+		"vue": "^3.2.26"
 	}
 }
