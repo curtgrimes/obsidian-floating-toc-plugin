@@ -36,18 +36,21 @@ const reveal = ref(false);
 	margin: 0;
 	padding: 0.1rem;
 	position: absolute;
-	top: 0;
+	top: 40px;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: flex-start;
 	overflow: hidden;
 
-	bottom: 0;
+	bottom: 40px;
 	width: 2rem;
 
 	&[data-reveal="true"] {
 		width: auto;
-		overflow: visible;
+		overflow: auto;
+	}
+	&[data-reveal="true"]::-webkit-scrollbar {
+		display: none;
 	}
 }
 </style>
