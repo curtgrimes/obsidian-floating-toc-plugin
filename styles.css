@@ -95,19 +95,21 @@
   margin: 0;
   padding: 0.1rem;
   position: absolute;
-  top: 0;
+  top: 40px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   overflow: hidden;
-  bottom: 0;
+  bottom: 40px;
   width: 2rem;
 }
 .floating-toc[data-reveal=true][data-v-8e08ca1f] {
   width: auto;
-  overflow: visible;
+  overflow: auto;
 }
-
+.floating-toc[data-reveal=true][data-v-8e08ca1f]::-webkit-scrollbar {
+  display: none;
+}
 /* sfc-style:/Users/curt/obsidian/Primary Vault/.obsidian/plugins/obsidian-floating-toc-plugin/src/components/FloatingTableOfContents.vue?type=style&index=1 */
 .workspace-leaf-content .cm-editor {
   padding-left: 2rem;
