@@ -55,7 +55,7 @@ function _handleScroll(evt: Event) {
 	let current_line
 	let current_heading = {};
 	if (view)
-		current_line = view.currentMode.getScroll() + 8
+		current_line = view.currentMode.getScroll() 
 	let i = props.headings.length
 	while (--i >= 0) {
 		if (props.headings[i].position.start.line <= current_line) {

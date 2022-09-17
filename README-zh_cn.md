@@ -5,7 +5,7 @@
 
 _[点击这里](./README-zh_cn.md)查看中文文档。_
 
-
+ ![](https://ghproxy.com/https://raw.githubusercontent.com/cumany/cumany/main/pic/202209171712621.gif)
 
 
 ## 如何安装
