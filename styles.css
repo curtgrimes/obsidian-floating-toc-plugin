@@ -1,4 +1,4 @@
-/* sfc-style:C:\Users\Administrator\Documents\github\obsidian-echarts\obsidian-floating-toc-plugin\src\components\HeadingListItem.vue?type=style&index=0 */
+/* sfc-style:\obsidian-floating-toc-plugin\src\components\HeadingListItem.vue?type=style&index=0 */
 .heading-list-item[data-v-72a6a55b] {
   z-index: 1;
   font-size: 0.7rem;
@@ -89,7 +89,7 @@
   padding-left: 2.5rem;
 }
 
-/* sfc-style:C:\Users\Administrator\Documents\github\obsidian-echarts\obsidian-floating-toc-plugin\src\components\FloatingTableOfContents.vue?type=style&index=0 */
+/* sfc-style:\obsidian-floating-toc-plugin\src\components\FloatingTableOfContents.vue?type=style&index=0 */
 .floating-toc[data-v-3bdd42b2] {
   list-style: none;
   margin: 0;
@@ -111,7 +111,7 @@
   display: none;
 }
 
-/* sfc-style:C:\Users\Administrator\Documents\github\obsidian-echarts\obsidian-floating-toc-plugin\src\components\FloatingTableOfContents.vue?type=style&index=1 */
+/* sfc-style:\obsidian-floating-toc-plugin\src\components\FloatingTableOfContents.vue?type=style&index=1 */
 .workspace-leaf-content .cm-editor {
   padding-left: 2rem;
 }
