@@ -4,13 +4,14 @@ const props = defineProps<{
 	// link: string;
 	level: number;
 	reveal: boolean;
+	index: number;
 }>();
 </script>
 
 <template>
-	<li class="heading-list-item" :data-level="level" :data-reveal="reveal">
+	<li class="heading-list-item" :data-id="index" :data-level="level" :data-reveal="reveal">
 		<div v-if="reveal" class="text-wrap">
-			<a href="#" class="text">{{ heading }}</a>
+			<a class="text">{{ heading }}</a>
 		</div>
 		<div v-else class="line-wrap" @mouseover="$emit('reveal')">
 			<div class="line"></div>
@@ -20,6 +21,17 @@ const props = defineProps<{
 
 <style lang="scss" scoped>
 $easeOutBack: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+.heading-list-item.located {
+	.line-wrap .line {
+		background: var(--text-highlight-bg-active);
+		height: 2.5px;
+	}
+
+	.text-wrap .text {
+		color: var(--text-highlight-bg-active);
+	}
+}
 
 .heading-list-item {
 	z-index: 1;
@@ -83,16 +95,21 @@ $easeOutBack: cubic-bezier(0.34, 1.56, 0.64, 1);
 			background: var(--background-primary);
 			padding: 0.25rem;
 			border-radius: 0.5rem;
+			text-decoration: none;
+			cursor: pointer;
+			
 
-			&::after {
-				content: "";
-				position: absolute;
-				top: 0;
-				right: 0;
-				bottom: 0;
-				left: 0;
+			&:hover {
+				color: var(--text-accent-hover);
+				font-weight: bold;
+			}
+
+			&:hover::after {
+				font-size: 8px;
 			}
 		}
+
+
 	}
 
 	&[data-reveal="true"] {
@@ -113,6 +130,17 @@ $easeOutBack: cubic-bezier(0.34, 1.56, 0.64, 1);
 		&[data-level="#{$level}"] {
 			padding-left: (0.5rem * ($level - 1));
 		}
+
+		&[data-level="#{$level}"] .text::after {
+			content: 'H#{$level}';
+			font-size: 6px;
+			margin-left: 1px;
+			color: var(--text-muted);
+			font-weight: normal !important;
+			/*background-color:var(--text-highlight-bg-active);*/
+			padding: 1px 2px 1px 2px;
+		}
+
 	}
 }
 </style>

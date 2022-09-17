@@ -14,8 +14,8 @@ if you want to view the source, please visit the github repository of this plugi
 const prod = (process.argv[2] === 'production');
 
 // Obsidian requires that the style file is called styles.css
-const renameCSSFile = () => fs.rename('main.css', 'styles.css', () => { });
-
+const renameCSSFile = () => fs.rename('./build/main.css', './build/styles.css', () => { });
+const copyjsonFile = () => fs.copyFile('./manifest.json', './build/manifest.json', () => { });
 try {
 	await esbuild.build({
 		banner: {
@@ -57,10 +57,11 @@ try {
 		logLevel: "info",
 		sourcemap: prod ? false : 'inline',
 		treeShaking: true,
-		outfile: 'main.js',
+		outfile: './build/main.js',
 
 	});
 	renameCSSFile();
+	copyjsonFile();
 }
 catch (e) {
 	console.error(e);

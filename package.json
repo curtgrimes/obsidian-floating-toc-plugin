@@ -16,10 +16,11 @@
 		"@typescript-eslint/parser": "^5.2.0",
 		"builtin-modules": "^3.2.0",
 		"esbuild": "0.13.12",
-		"obsidian": "^0.12.17",
+		"obsidian": "^0.15.0",
 		"tslib": "2.3.1",
 		"typescript": "4.4.4"
 	},
+	
 	"dependencies": {
 		"esbuild-plugin-vue3": "^0.3.0",
 		"sass": "^1.47.0",
