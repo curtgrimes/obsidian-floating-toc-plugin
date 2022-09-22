@@ -114,7 +114,7 @@ export default class FloatingToc extends Plugin {
 	async onload() {
 
 		const updateHeadingsForView = () => {
-			console.log("updateHeadingsForView")
+		//	console.log("updateHeadingsForView")
 			if (!resetcurrentleaf(this)) CreatToc(app, this)
 		};
 		this.registerEvent(

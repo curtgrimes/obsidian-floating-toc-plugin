@@ -1,10 +1,10 @@
 {
 	"id": "obsidian-floating-toc",
 	"name": "obsidian floating toc",
-	"version": "1.1.0",
+	"version": "2.0.1",
 	"minAppVersion": "0.12.0",
 	"description": "This is a sample plugin for Obsidian. This plugin demonstrates some of the capabilities of the Obsidian API.",
-	"author": "curtgrimes modified by Cuman",
+	"author": "Cuman",
 	"authorUrl": "https://github.com/curtgrimes/obsidian-floating-toc-plugin",
 	"isDesktopOnly": false
 }
