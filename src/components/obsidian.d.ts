@@ -1,5 +1,13 @@
 import "obsidian";
 
+
+ 
+
+declare global {
+    var headingdata: any;
+}
+
+
 declare module "obsidian" {
   export interface App {
     foldManager: FoldManager;
@@ -59,32 +67,7 @@ declare module "obsidian" {
     suggests: EditorSuggest<any>[];
   }
 
-  export interface Workspace extends Events {
-    on(name: "status-bar-updated", callback: () => any, ctx?: any): EventRef;
-    on(name: "ribbon-bar-updated", callback: () => any, ctx?: any): EventRef;
-    on(
-      name: "templates:template-appended",
-      callback: (event: TemplaterAppendedEvent) => any,
-      ctx?: any
-    ): EventRef;
-    on(
-      name: "templater:new-note-from-template",
-      callback: (event: TemplaterNewNoteEvent) => any,
-      ctx?: any
-    ): EventRef;
-    on(
-      name: "templater:template-appended",
-      callback: (event: TemplaterAppendedEvent) => any,
-      ctx?: any
-    ): EventRef;
-    on(
-      name: "templater:overwrite-file",
-      callback: (event: TemplaterOverwriteEvent) => any,
-      ctx?: any
-    ): EventRef;
-
-    editorSuggest: EditorSuggestOwner;
-  }
+ 
   interface VaultSettings {
     legacyEditor: boolean;
     foldHeading: boolean;

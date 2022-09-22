@@ -1,7 +1,8 @@
 # 介绍
 
    
-感谢 [floating-toc](https://github.com/curtgrimes/obsidian-floating-toc-plugin) 插件, 这个插件给我们的笔记带来了很大的便利，但试用还有点不变，于是魔改了这个插件并增加了很多功能。
+感谢 [floating-toc](https://github.com/curtgrimes/obsidian-floating-toc-plugin) 插件带来的灵感, 但因为长期没有更新，并且不兼容新的ob比如多窗口等，于是我重构了这个插件并增加了很多功能。
+重构插件，使得插件体积大幅度减少（只有原来的三十分之一），功能增加，性能提高。
 
 _[点击这里](./README-zh_cn.md)查看中文文档。_
 
@@ -26,6 +27,7 @@ _[点击这里](./README-zh_cn.md)查看中文文档。_
 1. 可以在编辑模式，阅读模式下运行
 2. 目录跟踪当前滚动的位置，并同步高亮显示
 3. ctrl + 点击目录 可以折叠/展开当前目录。
+4. 支持popout 多窗口
 
 > 插件均可从示例库获取，示例库的插件一般都经过了优化并修复了一些错误
 ☟☟☟
@@ -33,3 +35,11 @@ _[点击这里](./README-zh_cn.md)查看中文文档。_
 
 这是可以让你大开眼界的 Obsidian 示例库，里面有很多眼花缭乱的功能和示例，相信你看过一定会惊叹，这是 Obsidian 吗？
 [Blue-topaz-examples](https://github.com/cumany/Blue-topaz-examples)
+
+### 赞助
+
+Thank you very much for your support!
+
+<div align="center">
+<img src="https://ghproxy.com/https://raw.githubusercontent.com/cumany/cumany/main/pic/202209192228895.png" width="400px">
+</div>
