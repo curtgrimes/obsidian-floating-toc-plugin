@@ -2,10 +2,6 @@
 import type FloatingToc from "src/main";
 import { App, requireApiVersion, MarkdownView, HeadingCache } from "obsidian";
 
-
-
-
-
 export function createli(plugin:FloatingToc,ul_dom: HTMLElement, heading: HeadingCache, index: number) {
     let li_dom = ul_dom.createEl("li")
     li_dom.addClass("heading-list-item")
