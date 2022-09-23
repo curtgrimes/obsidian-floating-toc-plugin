@@ -14,7 +14,7 @@ export class FlotingTOCSettingTab extends PluginSettingTab {
   constructor(app: App, plugin: FloatingToc) {
     super(app, plugin);
     this.plugin = plugin;
-    addEventListener(" -toc", () => {
+    addEventListener("refresh-toc", () => {
       selfDestruct();
       CreatToc(app, this.plugin);
     });

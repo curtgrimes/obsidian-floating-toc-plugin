@@ -1,30 +1,34 @@
 
 import type FloatingToc from "src/main";
-import { App, requireApiVersion, MarkdownView,Component, HeadingCache,MarkdownRenderer } from "obsidian";
+import { App, requireApiVersion, MarkdownView, Component, HeadingCache, MarkdownRenderer } from "obsidian";
 
 
 export async function renderHeader(
-        source: string,
-        container?: HTMLElement,
-        notePath?: string,
-        component: Component = null
-    ) {
-  
-        let subcontainer = container
-        await MarkdownRenderer.renderMarkdown(
-            source,
-            subcontainer,
-            notePath,
-            component
-        );
-        let atag = subcontainer.createEl("a");
-        atag.addClass("text")
-        let par = subcontainer.querySelector("p");
-        if (par) {
-            atag.innerHTML= par.innerHTML
-           subcontainer.removeChild(par);
-        }
+    source: string,
+    container?: HTMLElement,
+    notePath?: string,
+    component: Component = null
+) {
+
+    let subcontainer = container
+    await MarkdownRenderer.renderMarkdown(
+        source,
+        subcontainer,
+        notePath,
+        component
+    );
+    let atag = subcontainer.createEl("a");
+    atag.addClass("text")
+    let par = subcontainer.querySelector("p");
+    if (par) {
+        const regex = /<a[^>]*>|<\/[^>]*a>/gm; //删除所有a标签
+        //const regex = /(?<=\>[^<]*?) /g; //删除所有空白符
+        atag.innerHTML = par.innerHTML.replace(regex, '');
+        subcontainer.removeChild(par);
     }
+
+
+}
 
 export async function createli(view: MarkdownView, ul_dom: HTMLElement, heading: HeadingCache, index: number) {
     let li_dom = ul_dom.createEl("li")
@@ -32,7 +36,9 @@ export async function createli(view: MarkdownView, ul_dom: HTMLElement, heading:
     li_dom.setAttribute("data-level", heading.level.toString())
     li_dom.setAttribute("data-id", index.toString())
     li_dom.setAttribute("data-line", heading.position.start.line.toString())
-    li_dom.onclick = function (event) {
+    let text_dom = li_dom.createEl("div")
+    text_dom.addClass("text-wrap")
+    text_dom.onclick = function (event) {
         let startline = parseInt(li_dom.getAttribute("data-line")) ?? 0
         if (event.ctrlKey) {
             foldheader(view, startline)
@@ -40,13 +46,19 @@ export async function createli(view: MarkdownView, ul_dom: HTMLElement, heading:
             openFileToLine(view, startline)
         }
     }
+  /*   text_dom.onmouseover = function () {
 
-    let text_dom = li_dom.createEl("div")
-    text_dom.addClass("text-wrap")
-   // let text = text_dom.createEl("a")
+        ul_dom.addClass("hover")
+    };
+    //注册鼠标离开事件
+    text_dom.onmouseout = function () {
+
+        ul_dom.removeClass("hover")
+    }; */
+    // let text = text_dom.createEl("a")
     //text.addClass("text")
-    renderHeader(heading.heading,text_dom,view.file.path,null)
-   // text.innerHTML = heading.heading
+    renderHeader(heading.heading, text_dom, view.file.path, null)
+    // text.innerHTML = heading.heading
     let line_dom = li_dom.createEl("div")
     line_dom.addClass("line-wrap")
     line_dom.createDiv().addClass("line")
@@ -55,13 +67,13 @@ export async function createli(view: MarkdownView, ul_dom: HTMLElement, heading:
 const openFileToLine = (view: MarkdownView, lineNumber: number) => {
     //const current_file = plugin.app.workspace.getActiveFile()
     //     console.log("line number", lineNumber);
-   // let leaf = plugin.app.workspace.getLeaf(false);
+    // let leaf = plugin.app.workspace.getLeaf(false);
     view.leaf.openFile(view.file, {
         eState: { line: lineNumber },
     });
 };
 const foldheader = (view: MarkdownView, startline: number) => {
-   // const view = plugin.app.workspace.getActiveViewOfType(MarkdownView)
+    // const view = plugin.app.workspace.getActiveViewOfType(MarkdownView)
     const existingFolds = view?.currentMode.getFoldInfo()?.folds ?? [];
     const headfrom = startline
     let index = 0;
@@ -87,12 +99,12 @@ export function CreatToc(
     plugin: FloatingToc
 ): void {
 
-    const genToc =  (currentleaf:HTMLElement, floatingTocWrapper: HTMLDivElement) => {
+    const genToc = (currentleaf: HTMLElement, floatingTocWrapper: HTMLDivElement) => {
 
         if (plugin.settings.positionStyle == "right")
-        floatingTocWrapper.addClass("floating-right"), floatingTocWrapper.removeClass("floating-left")
-    else if (plugin.settings.positionStyle == "left")
-    floatingTocWrapper.addClass("floating-left"), floatingTocWrapper.removeClass("floating-rigth")
+            floatingTocWrapper.addClass("floating-right"), floatingTocWrapper.removeClass("floating-left")
+        else if (plugin.settings.positionStyle == "left")
+            floatingTocWrapper.addClass("floating-left"), floatingTocWrapper.removeClass("floating-rigth")
         let ul_dom = floatingTocWrapper.createEl("ul")
         ul_dom.addClass("floating-toc")
         const current_file = app.workspace.getActiveFile()
@@ -112,7 +124,7 @@ export function CreatToc(
     let Markdown = this.app.workspace.getActiveViewOfType(MarkdownView);
     if (Markdown) {
         requireApiVersion("0.15.0") ? activeDocument = activeWindow.document : activeDocument = window.document;
-        let view=plugin.app.workspace.getActiveViewOfType(MarkdownView)
+        let view = plugin.app.workspace.getActiveViewOfType(MarkdownView)
         let float_toc_dom = view.contentEl?.querySelector(".floating-toc-div");
 
         if (!float_toc_dom) {
