@@ -1,7 +1,7 @@
 import { debounce, requireApiVersion, MarkdownView, Plugin, HeadingCache, App } from "obsidian";
-import { CreatToc, createli } from "src/components/floatingtocUI"
-
-
+import { CreatToc, createli,renderHeader } from "src/components/floatingtocUI"
+import { FlotingTOCSettingTab } from "src/settings/settingsTab";
+import { FlotingTOCSetting, DEFAULT_SETTINGS } from "src/settings/settingsData";
 
 
 export function selfDestruct() {
@@ -18,17 +18,21 @@ export function selfDestruct() {
 
 }
 
-export function resetcurrentleaf(plugin: FloatingToc) {
+export function refresh_node(view: MarkdownView) {
 	requireApiVersion("0.15.0") ? activeDocument = activeWindow.document : activeDocument = window.document;
-	let currentleaf = activeDocument?.querySelector(
-		".workspace-leaf.mod-active"
-	);
-	let float_toc_dom = currentleaf?.querySelector(".floating-toc-div");
+	//let currentleaf = activeDocument?.querySelector(".workspace-leaf.mod-active");
+	//let view=plugin.app.workspace.getActiveViewOfType(MarkdownView)
+	let float_toc_dom = view.contentEl?.querySelector(".floating-toc-div");
+	//console.log(float_toc_dom,"float_toc_dom")
 	if (float_toc_dom) {
 		let ul_dom = float_toc_dom.querySelector("ul.floating-toc") as HTMLElement
+		if (!ul_dom)
+			ul_dom = float_toc_dom.createEl("ul"), ul_dom.addClass("floating-toc")
 		let li_dom = float_toc_dom?.querySelectorAll("li.heading-list-item")
 		let headingdata = globalThis.headingdata
+		//console.log(headingdata,"headingdata")
 		if (headingdata) {
+		//	console.log("refresh_node")
 			if (li_dom.length >= headingdata.length) {
 				li_dom?.forEach((el, i) => {
 					if (headingdata[i]) {
@@ -40,7 +44,9 @@ export function resetcurrentleaf(plugin: FloatingToc) {
 							el.setAttribute("data-level", headingdata[i].level.toString());
 							el.setAttribute("data-id", i.toString());
 							el.setAttribute("data-line", headingdata[i].position.start.line.toString());
-							(el.children[0] as HTMLElement).innerHTML = '<a class="text">' + headingdata[i].heading + '</a>'
+							 el.children[0].querySelector("a")?.remove();
+							renderHeader( headingdata[i].heading,el.children[0]  as HTMLElement,view.file.path,null)
+							//(el.children[0] as HTMLElement).innerHTML = '<a class="text">' + headingdata[i].heading + '</a>'
 						}
 					} else {
 						el.remove()
@@ -59,18 +65,22 @@ export function resetcurrentleaf(plugin: FloatingToc) {
 							li_dom[i].setAttribute("data-level", el.level.toString());
 							li_dom[i].setAttribute("data-id", i.toString());
 							li_dom[i].setAttribute("data-line", el.position.start.line.toString());
-							(li_dom[i].children[0] as HTMLElement).innerHTML = '<a class="text">' + el.heading + '</a>'
+							//(li_dom[i].children[0] as HTMLElement).innerHTML = '<a class="text">' + el.heading + '</a>'
+							li_dom[i].children[0].querySelector("a")?.remove();
+							renderHeader( el.heading,li_dom[i].children[0]  as HTMLElement,view.file.path,null)
 
 						}
 					} else {
 
-						createli(plugin, ul_dom, el, i)
+						createli(view, ul_dom, el, i)
 					}
 				});
 			}
 			return true;
-		} else
-			return false;
+		} else {
+			ul_dom.remove();
+		}
+
 	} else
 		return false;
 
@@ -110,12 +120,13 @@ function _handleScroll(evt: Event) {
 }
 const handleScroll = debounce(_handleScroll, 200)
 export default class FloatingToc extends Plugin {
+	settings: any;
 
 	async onload() {
+		await this.loadSettings();
+		const updateHeadingsForView = (view: MarkdownView) => {
+			view ? refresh_node(view) ? false : CreatToc(app, this) : false
 
-		const updateHeadingsForView = () => {
-		//	console.log("updateHeadingsForView")
-			if (!resetcurrentleaf(this)) CreatToc(app, this)
 		};
 		this.registerEvent(
 			this.app.workspace.on("active-leaf-change", () => {
@@ -124,34 +135,51 @@ export default class FloatingToc extends Plugin {
 					const current_file = this.app.workspace.getActiveFile()
 					let heading = this.app.metadataCache.getFileCache(current_file).headings
 					globalThis.headingdata = heading
-					refresh();
+					//		console.log("refresh")
+					refresh(view);
 				}
 			}
 			)
 		);
+		/* 		this.registerEvent(this.app.workspace.on("file-open", (file) => {
+					let view = this.app.workspace.getActiveViewOfType(MarkdownView)
+					if (view) {
+						const current_file = this.app.workspace.getActiveFile()
+						let heading = this.app.metadataCache.getFileCache(current_file).headings
+						globalThis.headingdata = heading
+						console.log("refresh")
+						refresh(view);
+					}
+				}
+				)
+				); */
 		this.registerEvent(this.app.metadataCache.on('changed', () => {
-			const current_file = this.app.workspace.getActiveFile()
-			let heading = this.app.metadataCache.getFileCache(current_file).headings
-			let newheading = heading?.map(item => {
-				return item.level + item.heading +  item.position.start.line
-			})
-			let newheadingdata = globalThis.headingdata?.map((item:HeadingCache) => {
-				return item.level + item.heading +  item.position.start.line
-			})
-			if (JSON.stringify(newheadingdata) == JSON.stringify(newheading))
-				return  //标题结构行号没有变化不更新
-			else {
-				console.log("refresh")
-				globalThis.headingdata = heading
-				refresh()
+			let view = this.app.workspace.getActiveViewOfType(MarkdownView)
+			if (view) {
+				const current_file = view.file
+
+				let heading = this.app.metadataCache.getFileCache(current_file).headings
+				let newheading = heading?.map(item => {
+					return item.level + item.heading + item.position.start.line
+				})
+				let newheadingdata = globalThis.headingdata?.map((item: HeadingCache) => {
+					return item.level + item.heading + item.position.start.line
+				})
+				if (JSON.stringify(newheadingdata) == JSON.stringify(newheading))
+					return  //标题结构行号没有变化不更新
+				else {
+				//	console.log("refresh")
+					globalThis.headingdata = heading
+					refresh(view)
+				}
 			}
 
 		}))
 
-		const refresh_outline = () => {
-			updateHeadingsForView()
+		const refresh_outline = (view: MarkdownView): any => {
+			updateHeadingsForView(view)
 		}
-		const refresh = debounce(refresh_outline, 300, true)
+		const refresh = (view: MarkdownView) => debounce(refresh_outline(view), 300, true)
 		/* 		this.registerEvent(
 					this.app.workspace.on("editor-change", (editor) => {
 						const activeView =
@@ -172,8 +200,9 @@ export default class FloatingToc extends Plugin {
 
 
 		activeDocument.addEventListener("scroll", handleScroll, true)
+		this.addSettingTab(new FlotingTOCSettingTab(this.app, this));
 
-		updateHeadingsForView();
+		updateHeadingsForView(this.app.workspace.getActiveViewOfType(MarkdownView));
 		if (requireApiVersion("0.15.0")) {
 			this.app.workspace.on('window-open', (leaf) => {
 				leaf.doc.addEventListener("scroll", handleScroll, true)
@@ -185,5 +214,12 @@ export default class FloatingToc extends Plugin {
 	onunload() {
 		activeDocument.removeEventListener("scroll", handleScroll, true)
 		selfDestruct();
+	}
+	async loadSettings() {
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+	}
+
+	async saveSettings() {
+		await this.saveData(this.settings);
 	}
 }

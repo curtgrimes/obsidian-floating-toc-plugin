@@ -18,7 +18,7 @@ Please Refer: [How to install Obsidian Plugins](https://forum.obsidian.md/t/plug
 
 ## Key Features
 
-1. work well  in reading mode
+1. work well  in reading mode or  source mode
 2. The table of contents tracks the current scrolling position and highlights it synchronously
 3. ctrl + click on the floating toc to collapse/expand the current directory.
 4. Support popout multi-window mode
