@@ -44,6 +44,11 @@ export async function createli(view: MarkdownView, ul_dom: HTMLElement, heading:
             foldheader(view, startline)
         } else {
             openFileToLine(view, startline)
+            let prevLocation = ul_dom.querySelector(".text-wrap.located")
+			if (prevLocation) {
+				prevLocation.removeClass("located")
+			}
+            text_dom.addClass("located")
         }
     }
   /*   text_dom.onmouseover = function () {

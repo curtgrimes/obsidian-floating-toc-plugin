@@ -121,6 +121,7 @@ function _handleScroll(evt: Event) {
 			if (prevLocation) {
 				prevLocation.removeClass("located")
 			}
+		
 			let floattoc = container.querySelector(".floating-toc")
 			let curLocation = floattoc?.querySelector(`li[data-line='${line}']`)
 			if (curLocation) {
@@ -222,6 +223,7 @@ export default class FloatingToc extends Plugin {
 				leaf.doc.addEventListener("scroll", handleScroll, true)
 			});
 		}
+		if (app.workspace.layoutReady) app.workspace.trigger("parse-style-settings");
 
 	}
 
