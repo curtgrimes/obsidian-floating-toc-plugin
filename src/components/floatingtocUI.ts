@@ -1,6 +1,6 @@
 
 import type FloatingToc from "src/main";
-import { App, requireApiVersion, MarkdownView, Component, HeadingCache, MarkdownRenderer } from "obsidian";
+import { App, requireApiVersion, MarkdownView, Component, HeadingCache, MarkdownRenderer, ButtonComponent } from "obsidian";
 
 
 export async function renderHeader(
@@ -9,7 +9,17 @@ export async function renderHeader(
     notePath?: string,
     component: Component = null
 ) {
-
+    const regex = /(?<=^\s*)[0-9]+\.\s/; //有序列表
+    const regex2 = /(?<=^\s*)[\-\+]\s/; //无序列表  
+    let m;
+    let prelist = '';
+    if ((m = regex.exec(source)) !== null) {
+        prelist = m[0]
+        source = source.replace(regex, '');
+    } else if ((m = regex2.exec(source)) !== null) {
+        prelist = m[0]
+        source = source.replace(regex2, '');
+    }
     let subcontainer = container
     await MarkdownRenderer.renderMarkdown(
         source,
@@ -23,7 +33,8 @@ export async function renderHeader(
     if (par) {
         const regex = /<a[^>]*>|<\/[^>]*a>/gm; //删除所有a标签
         //const regex = /(?<=\>[^<]*?) /g; //删除所有空白符
-        atag.innerHTML = par.innerHTML.replace(regex, '');
+        if(prelist)  atag.innerHTML = prelist + par.innerHTML.replace(regex, '');
+       else  atag.innerHTML = par.innerHTML.replace(regex, '');
         subcontainer.removeChild(par);
     }
 
@@ -45,24 +56,16 @@ export async function createli(view: MarkdownView, ul_dom: HTMLElement, heading:
         } else {
             openFileToLine(view, startline)
             let prevLocation = ul_dom.querySelector(".text-wrap.located")
-			if (prevLocation) {
-				prevLocation.removeClass("located")
-			}
+            if (prevLocation) {
+                prevLocation.removeClass("located")
+            }
             text_dom.addClass("located")
         }
     }
-  /*   text_dom.onmouseover = function () {
-
-        ul_dom.addClass("hover")
-    };
-    //注册鼠标离开事件
-    text_dom.onmouseout = function () {
-
-        ul_dom.removeClass("hover")
-    }; */
-    // let text = text_dom.createEl("a")
-    //text.addClass("text")
+  
+ 
     renderHeader(heading.heading, text_dom, view.file.path, null)
+
     // text.innerHTML = heading.heading
     let line_dom = li_dom.createEl("div")
     line_dom.addClass("line-wrap")
@@ -135,7 +138,16 @@ export function CreatToc(
         if (!float_toc_dom) {
             const floatingTocWrapper = createEl("div");
             floatingTocWrapper.addClass("floating-toc-div");
-
+            let pinbutton = new ButtonComponent(floatingTocWrapper);
+            pinbutton
+                .setIcon("pin")
+                .setTooltip("pin")
+                .onClick(() => {
+                    if (view.contentEl.querySelector(".floating-toc-div.pin"))
+                        floatingTocWrapper.removeClass("pin")
+                    else
+                        floatingTocWrapper.addClass("pin");
+                });
             genToc(view.contentEl, floatingTocWrapper)
         } else return;
     }
