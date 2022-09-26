@@ -1,7 +1,7 @@
 {
 	"id": "obsidian-floating-toc",
 	"name": "obsidian floating toc",
-	"version": "2.1.2",
+	"version": "2.1.5",
 	"minAppVersion": "0.12.0",
 	"description": "This is a floating Toc plugin that  hovers a table of content  containing a header level on the notes sidebar.",
 	"author": "Cuman",

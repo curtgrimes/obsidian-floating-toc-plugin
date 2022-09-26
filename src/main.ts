@@ -1,5 +1,5 @@
 import { debounce, requireApiVersion, MarkdownView, Plugin, HeadingCache, App } from "obsidian";
-import { CreatToc, createli,renderHeader } from "src/components/floatingtocUI"
+import { CreatToc, createli, renderHeader } from "src/components/floatingtocUI"
 import { FlotingTOCSettingTab } from "src/settings/settingsTab";
 import { FlotingTOCSetting, DEFAULT_SETTINGS } from "src/settings/settingsData";
 
@@ -32,7 +32,7 @@ export function refresh_node(view: MarkdownView) {
 		let headingdata = globalThis.headingdata
 		//console.log(headingdata,"headingdata")
 		if (headingdata) {
-		//	console.log("refresh_node")
+			//	console.log("refresh_node")
 			if (li_dom.length >= headingdata.length) {
 				li_dom?.forEach((el, i) => {
 					if (headingdata[i]) {
@@ -44,8 +44,8 @@ export function refresh_node(view: MarkdownView) {
 							el.setAttribute("data-level", headingdata[i].level.toString());
 							el.setAttribute("data-id", i.toString());
 							el.setAttribute("data-line", headingdata[i].position.start.line.toString());
-							 el.children[0].querySelector("a")?.remove();
-							renderHeader( headingdata[i].heading,el.children[0]  as HTMLElement,view.file.path,null)
+							el.children[0].querySelector("a")?.remove();
+							renderHeader(headingdata[i].heading, el.children[0] as HTMLElement, view.file.path, null)
 							//(el.children[0] as HTMLElement).innerHTML = '<a class="text">' + headingdata[i].heading + '</a>'
 						}
 					} else {
@@ -67,7 +67,7 @@ export function refresh_node(view: MarkdownView) {
 							li_dom[i].setAttribute("data-line", el.position.start.line.toString());
 							//(li_dom[i].children[0] as HTMLElement).innerHTML = '<a class="text">' + el.heading + '</a>'
 							li_dom[i].children[0].querySelector("a")?.remove();
-							renderHeader( el.heading,li_dom[i].children[0]  as HTMLElement,view.file.path,null)
+							renderHeader(el.heading, li_dom[i].children[0] as HTMLElement, view.file.path, null)
 
 						}
 					} else {
@@ -85,6 +85,7 @@ export function refresh_node(view: MarkdownView) {
 		return false;
 
 }
+
 function _handleScroll(evt: Event) {
 	let target = evt.target as HTMLElement
 	if (target.parentElement?.classList.contains("cm-editor") || target.parentElement?.classList.contains("markdown-reading-view")) {
@@ -92,43 +93,67 @@ function _handleScroll(evt: Event) {
 		let current_line
 		let current_heading = {};
 		if (view) {
-			current_line = view.currentMode.getScroll() 
-		/* 	let float_toc_dom = view.contentEl?.querySelector(".floating-toc-div");
-			let li_dom = float_toc_dom?.querySelectorAll("li.heading-list-item")
-			let headline = [];
-			li_dom?.forEach((el, i) => {
-				headline.push(li_dom[i].getAttribute("data-line"))
-			}) */
+			current_line = view.currentMode.getScroll() ?? 0
+			/* 	let float_toc_dom = view.contentEl?.querySelector(".floating-toc-div");
+				let li_dom = float_toc_dom?.querySelectorAll("li.heading-list-item")
+				let headline = [];
+				li_dom?.forEach((el, i) => {
+					headline.push(li_dom[i].getAttribute("data-line"))
+				}) */
 
-
+			//	console.log(current_line, "current_line")
 			let headings = globalThis.headingdata
 			let i = headings?.length ?? 0
-			let line 
-			while (--i >= 0) {
-				if (headings[i].position.start.line <= current_line) {
-					current_heading = headings[i]
-				//	console.log(current_heading)
-					line = headings[i].position.start.line
-					break
+			let line = 0
+			let floattoc = view.contentEl.querySelector(".floating-toc")
+			if (floattoc) {
+				let firstline = parseInt(floattoc.firstElementChild?.getAttribute("data-line"))
+				let lastline = parseInt(floattoc.lastElementChild?.getAttribute("data-line"))
+				//滚动到顶部，指示器定位到顶部
+				if (current_line <= 0) {
+					let prevLocation = floattoc.querySelector(".heading-list-item.located")
+					if (prevLocation) {
+						prevLocation.removeClass("located")
+					}
+					let curLocation = floattoc?.querySelector(`li[data-line='${firstline}']`)
+					curLocation.addClass("located");
+					let Location = floattoc.querySelector(".heading-list-item")
+					Location.scrollIntoView()
 				}
-			}
-			if (!current_heading) {
-				return
-			}
-			
-			let container = activeDocument?.querySelector(".workspace-leaf.mod-active");
-			let prevLocation = container.querySelector(".heading-list-item.located")
-			if (prevLocation) {
-				prevLocation.removeClass("located")
-			}
-		
-			let floattoc = container.querySelector(".floating-toc")
-			let curLocation = floattoc?.querySelector(`li[data-line='${line}']`)
-			if (curLocation) {
-				if(curLocation.nextElementSibling)
-				curLocation.nextElementSibling.addClass("located")
-				else
-				curLocation.lastElementChild.addClass("located")
+				else {
+					while (--i >= 0) {
+						if (headings[i].position.start.line <= current_line) {
+							current_heading = headings[i]
+							//	console.log(current_heading)
+							line = headings[i].position.start.line
+							break
+						}
+					}
+					if (!current_heading) {
+						return
+					}
+
+					//let container = activeDocument?.querySelector(".workspace-leaf.mod-active");
+
+					let prevLocation = floattoc.querySelector(".heading-list-item.located")
+					if (prevLocation) {
+						prevLocation.removeClass("located")
+					}
+
+
+					if (!line && floattoc) line = firstline
+					//	console.log(line)
+					let curLocation = floattoc?.querySelector(`li[data-line='${line}']`)
+					if (curLocation) {
+						if (line == lastline || line == firstline) {
+							curLocation.addClass("located");
+						} else
+							if (curLocation.nextElementSibling) {
+								curLocation.nextElementSibling.addClass("located");
+							}
+						curLocation.scrollIntoView({ block: "center" })
+					}
+				}
 			}
 		}
 	}
@@ -183,7 +208,7 @@ export default class FloatingToc extends Plugin {
 				if (JSON.stringify(newheadingdata) == JSON.stringify(newheading))
 					return  //标题结构行号没有变化不更新
 				else {
-				//	console.log("refresh")
+					//	console.log("refresh")
 					globalThis.headingdata = heading
 					refresh(view)
 				}

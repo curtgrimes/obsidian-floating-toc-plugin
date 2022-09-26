@@ -1,9 +1,9 @@
+### [中文](./README-zh_cn.md) | English
 # floating -toc Plugin
 
    
 Thanks to the [floating-toc](https://github.com/curtgrimes/obsidian-floating-toc-plugin) plugin for the inspiration, but since it had not been updated for a long time and was not compatible with new ob such as multi-window, I refactored the plugin and added a lot of features. Now the size of the plugin has been significantly reduced (only one thirtieth of the original), the functionality has been increased, and the performance has been improved.
 
-_[点击这里](./README-zh_cn.md)查看中文文档。_
 
  ![](https://ghproxy.com/https://raw.githubusercontent.com/cumany/cumany/main/pic/202209171712621.gif)
 

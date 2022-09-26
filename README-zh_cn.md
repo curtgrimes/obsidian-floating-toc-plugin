@@ -1,10 +1,10 @@
+### 中文 | [English](./README.md)
 # 介绍
 
    
 感谢 [floating-toc](https://github.com/curtgrimes/obsidian-floating-toc-plugin) 插件带来的灵感, 但因为长期没有更新，并且不兼容新的ob比如多窗口等，于是我重构了这个插件并增加了很多功能。
 重构插件，使得插件体积大幅度减少（只有原来的三十分之一），功能增加，性能提高。
 
-_[点击这里](./README-zh_cn.md)查看中文文档。_
 
  ![](https://ghproxy.com/https://raw.githubusercontent.com/cumany/cumany/main/pic/202209171712621.gif)
 

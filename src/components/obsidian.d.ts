@@ -10,45 +10,43 @@ declare global {
 
 declare module "obsidian" {
   export interface App {
-    foldManager: FoldManager;
-  }
+    foldManager: FoldManager
+    plugins: Plugins
+    commands: Commands
+    setting: SettingsManager
+}
 
-  interface TreeItem {
-    setCollapsed(collapse: boolean): Promise<void>;
-    collapsed: boolean;
-    children: TreeItem[];
-    el: HTMLElement;
-    heading: HeadingCache;
-  }
+  interface SettingsManager {
+    activeTab: SettingTab | null;
+    openTabById(id: string): SettingTab | null;
+    openTab(tab: SettingTab): void;
+    open(): void;
+    close(): void;
+    onOpen(): void;
+    onClose(): void;
+    settingTabs: SettingTab[];
+    pluginTabs: SettingTab[];
+    addSettingTab(): void;
+    removeSettingTab(): void;
+    containerEl: HTMLDivElement;
+}
 
-  interface TreeView {
-    children: TreeItem[];
-    allItems: TreeItem[];
-  }
+interface Plugins {
+  manifests: Record<string, PluginManifest>;
+  plugins: Record<string, Plugin_2>;
+  enabledPlugins:any;
+  enablePlugin(pluginId: string): Promise<boolean>;
+  disblePlugin(pluginId: string): Promise<void>;
+}
 
-  export interface OutlineView extends View {
-    file: TFile;
-    treeView: TreeView;
-    update: () => void;
-    close: () => void;
-  }
+interface Commands {
+  commands: Record<string, Command>;
+  addCommand(cmd: Command): void;
+  removeCommand(cmd: Command): void;
+}
 
-  export interface TemplaterNewNoteEvent {
-    file: TFile;
-    contents: string;
-  }
 
-  export interface TemplaterOverwriteEvent {
-    file: TFile;
-    contents: string;
-  }
 
-  export interface TemplaterAppendedEvent {
-    oldSelections: EditorSelection[];
-    newSelections: EditorSelection[];
-    view: MarkdownView;
-    content: string;
-  }
 
   interface MarkdownView {
     onMarkdownFold(): void;
@@ -67,16 +65,6 @@ declare module "obsidian" {
     suggests: EditorSuggest<any>[];
   }
 
- 
-  interface VaultSettings {
-    legacyEditor: boolean;
-    foldHeading: boolean;
-    foldIndent: boolean;
-    rightToLeft: boolean;
-    readableLineLength: boolean;
-    tabSize: number;
-    showFrontmatter: boolean;
-  }
 
   interface FoldPosition {
     from: number;
@@ -93,31 +81,7 @@ declare module "obsidian" {
     save(file: TFile, foldInfo: FoldInfo): Promise<void>;
   }
 
-  interface Vault {
-    config: Record<string, any>;
-    getConfig<T extends keyof VaultSettings>(setting: T): VaultSettings[T];
-  }
 
-  export interface PluginInstance {
-    id: string;
-  }
 
-  export interface ViewRegistry {
-    viewByType: Record<string, (leaf: WorkspaceLeaf) => unknown>;
-    isExtensionRegistered(extension: string): boolean;
-  }
-
-  export interface App {
-    internalPlugins: InternalPlugins;
-    viewRegistry: ViewRegistry;
-  }
-  export interface InstalledPlugin {
-    enabled: boolean;
-    instance: PluginInstance;
-  }
-
-  export interface InternalPlugins {
-    plugins: Record<string, InstalledPlugin>;
-    getPluginById(id: string): InstalledPlugin;
-  }
 }
+
