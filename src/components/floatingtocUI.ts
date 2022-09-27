@@ -142,8 +142,9 @@ export function CreatToc(
             pinbutton
                 .setIcon("pin")
                 .setTooltip("pin")
+                .setClass("pin")
                 .onClick(() => {
-                    if (view.contentEl.querySelector(".floating-toc-div.pin"))
+                    if(floatingTocWrapper.classList.contains("pin"))
                         floatingTocWrapper.removeClass("pin")
                     else
                         floatingTocWrapper.addClass("pin");
