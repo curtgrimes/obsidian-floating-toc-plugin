@@ -115,6 +115,25 @@ export function CreatToc(
             floatingTocWrapper.addClass("floating-left"), floatingTocWrapper.removeClass("floating-rigth")
         let ul_dom = floatingTocWrapper.createEl("ul")
         ul_dom.addClass("floating-toc")
+        let pinbutton = new ButtonComponent(ul_dom);
+        pinbutton
+            .setIcon("pin")
+            .setTooltip("pin")
+            .setClass("pin")
+            .setClass("hide")
+            .onClick(() => {
+                if(floatingTocWrapper.classList.contains("pin"))
+                    floatingTocWrapper.removeClass("pin")
+                else
+                    floatingTocWrapper.addClass("pin");
+            });
+        ul_dom.onmouseenter = function () { //移入事件
+            pinbutton.buttonEl.removeClass("hide")
+        }
+        ul_dom.onmouseleave= function () { //移出事件
+            pinbutton.buttonEl.addClass("hide")
+        }
+          
         const current_file = app.workspace.getActiveFile()
         globalThis.headingdata = app.metadataCache.getFileCache(current_file).headings
         if (globalThis.headingdata) {
@@ -138,17 +157,7 @@ export function CreatToc(
         if (!float_toc_dom) {
             const floatingTocWrapper = createEl("div");
             floatingTocWrapper.addClass("floating-toc-div");
-            let pinbutton = new ButtonComponent(floatingTocWrapper);
-            pinbutton
-                .setIcon("pin")
-                .setTooltip("pin")
-                .setClass("pin")
-                .onClick(() => {
-                    if(floatingTocWrapper.classList.contains("pin"))
-                        floatingTocWrapper.removeClass("pin")
-                    else
-                        floatingTocWrapper.addClass("pin");
-                });
+        
             genToc(view.contentEl, floatingTocWrapper)
         } else return;
     }

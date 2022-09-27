@@ -107,7 +107,7 @@ function _handleScroll(evt: Event) {
 			let line = 0
 			let floattoc = view.contentEl.querySelector(".floating-toc")
 			if (floattoc) {
-				let firstline = parseInt(floattoc.firstElementChild?.getAttribute("data-line"))
+				let firstline = parseInt(floattoc.querySelector("li.heading-list-item")?.getAttribute("data-line"))
 				let lastline = parseInt(floattoc.lastElementChild?.getAttribute("data-line"))
 				//滚动到顶部，指示器定位到顶部
 				if (current_line <= 0) {
@@ -115,8 +115,9 @@ function _handleScroll(evt: Event) {
 					if (prevLocation) {
 						prevLocation.removeClass("located")
 					}
+
 					let curLocation = floattoc?.querySelector(`li[data-line='${firstline}']`)
-					curLocation.addClass("located");
+					if (curLocation) curLocation.addClass("located");
 					let Location = floattoc.querySelector(".heading-list-item")
 					Location.scrollIntoView()
 				}
@@ -168,6 +169,24 @@ export default class FloatingToc extends Plugin {
 			view ? refresh_node(view) ? false : CreatToc(app, this) : false
 
 		};
+		this.addCommand({
+			id: "pin-toc-panel",
+			name: "Pinning the Floating TOC panel",
+			icon: "pin",
+			callback: async () => {
+				let view = this.app.workspace.getActiveViewOfType(MarkdownView)
+				if (view) {
+					let floatingTocWrapper = view.contentEl.querySelector(".floating-toc-div")
+					if (floatingTocWrapper) {
+						if (floatingTocWrapper.classList.contains("pin"))
+							floatingTocWrapper.removeClass("pin")
+						else
+							floatingTocWrapper.addClass("pin");
+					}
+
+				}
+			},
+		});
 		this.registerEvent(
 			this.app.workspace.on("active-leaf-change", () => {
 				let view = this.app.workspace.getActiveViewOfType(MarkdownView)
