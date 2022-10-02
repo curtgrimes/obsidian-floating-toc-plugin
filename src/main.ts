@@ -119,7 +119,8 @@ function _handleScroll(evt: Event) {
 					let curLocation = floattoc?.querySelector(`li[data-line='${firstline}']`)
 					if (curLocation) curLocation.addClass("located");
 					let Location = floattoc.querySelector(".heading-list-item")
-					Location.scrollIntoView()
+					setTimeout(()=>Location.scrollIntoViewIfNeeded(),300)
+					
 				}
 				else {
 					while (--i >= 0) {
@@ -152,7 +153,8 @@ function _handleScroll(evt: Event) {
 							if (curLocation.nextElementSibling) {
 								curLocation.nextElementSibling.addClass("located");
 							}
-						curLocation.scrollIntoView({ block: "center" })
+						//curLocation.scrollIntoView({ block: "center" })
+						curLocation.scrollIntoViewIfNeeded();
 					}
 				}
 			}

@@ -129,9 +129,11 @@ export function CreatToc(
             });
         ul_dom.onmouseenter = function () { //移入事件
             pinbutton.buttonEl.removeClass("hide")
+            floatingTocWrapper.addClass("hover")
         }
         ul_dom.onmouseleave= function () { //移出事件
             pinbutton.buttonEl.addClass("hide")
+            floatingTocWrapper.removeClass("hover")
         }
           
         const current_file = app.workspace.getActiveFile()
