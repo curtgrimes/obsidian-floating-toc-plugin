@@ -7,6 +7,8 @@ Thanks to the [floating-toc](https://github.com/curtgrimes/obsidian-floating-toc
 
  ![](https://ghproxy.com/https://raw.githubusercontent.com/cumany/cumany/main/pic/202209171712621.gif)
 
+## Set the appearance with the style setting plugin
+![float toc1](https://user-images.githubusercontent.com/42957010/195370659-d77a7c31-1711-42b3-80fc-3b9a06eb9b0c.gif)
 
 ## how-to-install
 
