@@ -8,6 +8,9 @@
 
  ![](https://ghproxy.com/https://raw.githubusercontent.com/cumany/cumany/main/pic/202209171712621.gif)
 
+## 用style setting 插件 开启更多外观设置
+
+![float toc1](https://user-images.githubusercontent.com/42957010/195370659-d77a7c31-1711-42b3-80fc-3b9a06eb9b0c.gif)
 
 ## 如何安装
 
