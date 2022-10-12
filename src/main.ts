@@ -1,9 +1,11 @@
-import { debounce, requireApiVersion, MarkdownView, Plugin, HeadingCache, App } from "obsidian";
+import { debounce, Platform, requireApiVersion, MarkdownView, Plugin, HeadingCache, App } from "obsidian";
 import { CreatToc, createli, renderHeader } from "src/components/floatingtocUI"
 import { FlotingTOCSettingTab } from "src/settings/settingsTab";
 import { FlotingTOCSetting, DEFAULT_SETTINGS } from "src/settings/settingsData";
 
+
 let activeDocument: Document;
+let line = 0;
 export function selfDestruct() {
 	requireApiVersion("0.15.0") ? activeDocument = activeWindow.document : activeDocument = window.document;
 	let float_toc_dom = activeDocument.querySelectorAll(
@@ -45,7 +47,7 @@ export function refresh_node(view: MarkdownView) {
 							el.setAttribute("data-id", i.toString());
 							el.setAttribute("data-line", headingdata[i].position.start.line.toString());
 							el.children[0].querySelector("a")?.remove();
-							renderHeader(headingdata[i].heading, el.children[0] as HTMLElement, view.file.path, null)
+							renderHeader(view, headingdata[i].heading, el.children[0] as HTMLElement, view.file.path, null)
 							//(el.children[0] as HTMLElement).innerHTML = '<a class="text">' + headingdata[i].heading + '</a>'
 						}
 					} else {
@@ -67,7 +69,7 @@ export function refresh_node(view: MarkdownView) {
 							li_dom[i].setAttribute("data-line", el.position.start.line.toString());
 							//(li_dom[i].children[0] as HTMLElement).innerHTML = '<a class="text">' + el.heading + '</a>'
 							li_dom[i].children[0].querySelector("a")?.remove();
-							renderHeader(el.heading, li_dom[i].children[0] as HTMLElement, view.file.path, null)
+							renderHeader(view, el.heading, li_dom[i].children[0] as HTMLElement, view.file.path, null)
 
 						}
 					} else {
@@ -79,13 +81,22 @@ export function refresh_node(view: MarkdownView) {
 			return true;
 		} else {
 			ul_dom.remove();
+			return false;
 		}
 
 	} else
 		return false;
 
 }
-
+function siblingElems(elem: Element) {
+	var nodes = [];
+	while ((elem = elem.previousElementSibling)) {
+		if (elem.nodeType == 1) {
+			nodes.push(elem);
+		}
+	}
+	return nodes;
+}
 function _handleScroll(evt: Event) {
 	let target = evt.target as HTMLElement
 	if (target.parentElement?.classList.contains("cm-editor") || target.parentElement?.classList.contains("markdown-reading-view")) {
@@ -104,7 +115,6 @@ function _handleScroll(evt: Event) {
 			//	console.log(current_line, "current_line")
 			let headings = globalThis.headingdata
 			let i = headings?.length ?? 0
-			let line = 0
 			let floattoc = view.contentEl.querySelector(".floating-toc")
 			if (floattoc) {
 				let firstline = parseInt(floattoc.querySelector("li.heading-list-item")?.getAttribute("data-line"))
@@ -118,9 +128,24 @@ function _handleScroll(evt: Event) {
 
 					let curLocation = floattoc?.querySelector(`li[data-line='${firstline}']`)
 					if (curLocation) curLocation.addClass("located");
-					let Location = floattoc.querySelector(".heading-list-item")
-					setTimeout(()=>Location.scrollIntoViewIfNeeded(),300)
+
+
+					let level = parseInt(curLocation.getAttribute("data-level"))
+					level = level > 1 ? level - 1 : 1;
+					let siblings = siblingElems(curLocation);
+					let focusele = floattoc?.querySelector(`li.focus`)
+					if (focusele) {
+						focusele.removeClass("focus")
+					}
+					siblings.some(element => {
+						if ((element as HTMLInputElement).dataset['level'] <= level.toString()) 
+						{ element.addClass('focus'); return true}
+					});
+
 					
+					let Location = floattoc.querySelector(".heading-list-item")
+					setTimeout(() => Location.scrollIntoViewIfNeeded(), 300)
+
 				}
 				else {
 					while (--i >= 0) {
@@ -146,13 +171,26 @@ function _handleScroll(evt: Event) {
 					if (!line && floattoc) line = firstline
 					//	console.log(line)
 					let curLocation = floattoc?.querySelector(`li[data-line='${line}']`)
+
 					if (curLocation) {
 						if (line == lastline || line == firstline) {
 							curLocation.addClass("located");
 						} else
 							if (curLocation.nextElementSibling) {
 								curLocation.nextElementSibling.addClass("located");
+								let level = parseInt(curLocation.nextElementSibling.getAttribute("data-level"))
+								level = level > 1 ? level - 1 : 1;
+								let siblings = siblingElems(curLocation.nextElementSibling);
+								let focusele = floattoc?.querySelector(`li.focus`)
+								if (focusele) {
+									focusele.removeClass("focus")
+								}
+								siblings.some(element => {
+									if ((element as HTMLInputElement).dataset['level'] <= level.toString()) 
+									{ element.addClass('focus'); return true}
+								});
 							}
+
 						//curLocation.scrollIntoView({ block: "center" })
 						curLocation.scrollIntoViewIfNeeded();
 					}
@@ -171,6 +209,12 @@ export default class FloatingToc extends Plugin {
 			view ? refresh_node(view) ? false : CreatToc(app, this) : false
 
 		};
+		let isLoadOnMobile = this.settings.isLoadOnMobile
+		if (Platform.isMobileApp && isLoadOnMobile) {
+			console.log(`floating toc disable loading on mobile`);
+			return;
+
+		}
 		this.addCommand({
 			id: "pin-toc-panel",
 			name: "Pinning the Floating TOC panel",
@@ -196,6 +240,8 @@ export default class FloatingToc extends Plugin {
 					const current_file = this.app.workspace.getActiveFile()
 					let heading = this.app.metadataCache.getFileCache(current_file).headings
 					globalThis.headingdata = heading
+					if (this.settings.ignoreTopHeader)
+						globalThis.headingdata = heading.slice(1);
 					//		console.log("refresh")
 					refresh(view);
 				}
@@ -231,6 +277,8 @@ export default class FloatingToc extends Plugin {
 				else {
 					//	console.log("refresh")
 					globalThis.headingdata = heading
+					if (this.settings.ignoreTopHeader)
+						globalThis.headingdata = heading.slice(1);
 					refresh(view)
 				}
 			}

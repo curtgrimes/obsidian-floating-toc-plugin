@@ -1,9 +1,10 @@
 
 import type FloatingToc from "src/main";
-import { App, requireApiVersion, MarkdownView, Component, HeadingCache, MarkdownRenderer, ButtonComponent } from "obsidian";
+import { App, requireApiVersion, MarkdownView, Component, HeadingCache, MarkdownRenderer, ButtonComponent, View } from "obsidian";
 
 
 export async function renderHeader(
+    view: MarkdownView,
     source: string,
     container?: HTMLElement,
     notePath?: string,
@@ -29,12 +30,25 @@ export async function renderHeader(
     );
     let atag = subcontainer.createEl("a");
     atag.addClass("text")
+    atag.onclick = function (event) {
+        let startline = parseInt(subcontainer.parentElement.getAttribute("data-line")) ?? 0
+        if (event.ctrlKey) {
+            foldheader(view, startline)
+        } else {
+            openFileToLine(view, startline)
+            let prevLocation = subcontainer.parentElement.parentElement.querySelector(".text-wrap.located")
+            if (prevLocation) {
+                prevLocation.removeClass("located")
+            }
+            subcontainer.addClass("located")
+        }
+    }
     let par = subcontainer.querySelector("p");
     if (par) {
         const regex = /<a[^>]*>|<\/[^>]*a>/gm; //删除所有a标签
         //const regex = /(?<=\>[^<]*?) /g; //删除所有空白符
-        if(prelist)  atag.innerHTML = prelist + par.innerHTML.replace(regex, '');
-       else  atag.innerHTML = par.innerHTML.replace(regex, '');
+        if (prelist) atag.innerHTML = prelist + par.innerHTML.replace(regex, '');
+        else atag.innerHTML = par.innerHTML.replace(regex, '');
         subcontainer.removeChild(par);
     }
 
@@ -49,22 +63,10 @@ export async function createli(view: MarkdownView, ul_dom: HTMLElement, heading:
     li_dom.setAttribute("data-line", heading.position.start.line.toString())
     let text_dom = li_dom.createEl("div")
     text_dom.addClass("text-wrap")
-    text_dom.onclick = function (event) {
-        let startline = parseInt(li_dom.getAttribute("data-line")) ?? 0
-        if (event.ctrlKey) {
-            foldheader(view, startline)
-        } else {
-            openFileToLine(view, startline)
-            let prevLocation = ul_dom.querySelector(".text-wrap.located")
-            if (prevLocation) {
-                prevLocation.removeClass("located")
-            }
-            text_dom.addClass("located")
-        }
-    }
-  
- 
-    renderHeader(heading.heading, text_dom, view.file.path, null)
+
+
+
+    renderHeader(view, heading.heading, text_dom, view.file.path, null)
 
     // text.innerHTML = heading.heading
     let line_dom = li_dom.createEl("div")
@@ -113,32 +115,49 @@ export function CreatToc(
             floatingTocWrapper.addClass("floating-right"), floatingTocWrapper.removeClass("floating-left")
         else if (plugin.settings.positionStyle == "left")
             floatingTocWrapper.addClass("floating-left"), floatingTocWrapper.removeClass("floating-rigth")
+        if (plugin.settings.isLeft)
+            floatingTocWrapper.removeClass("alignLeft"), floatingTocWrapper.addClass("alignLeft")
+        else floatingTocWrapper.removeClass("alignLeft")
         let ul_dom = floatingTocWrapper.createEl("ul")
         ul_dom.addClass("floating-toc")
-        let pinbutton = new ButtonComponent(ul_dom);
-        pinbutton
+        let toolbar = ul_dom.createEl("div")
+        toolbar.addClass("toolbar")
+        toolbar.addClass("pin")
+        toolbar.addClass("hide")
+        let pinButton = new ButtonComponent(toolbar);
+        pinButton
             .setIcon("pin")
             .setTooltip("pin")
-            .setClass("pin")
-            .setClass("hide")
             .onClick(() => {
-                if(floatingTocWrapper.classList.contains("pin"))
+                if (floatingTocWrapper.classList.contains("pin"))
                     floatingTocWrapper.removeClass("pin")
                 else
                     floatingTocWrapper.addClass("pin");
             });
         ul_dom.onmouseenter = function () { //移入事件
-            pinbutton.buttonEl.removeClass("hide")
+            toolbar.removeClass("hide")
             floatingTocWrapper.addClass("hover")
         }
-        ul_dom.onmouseleave= function () { //移出事件
-            pinbutton.buttonEl.addClass("hide")
+        ul_dom.onmouseleave = function () { //移出事件
+            toolbar.addClass("hide")
             floatingTocWrapper.removeClass("hover")
         }
-          
+        let topBuuton = new ButtonComponent(toolbar);
+        topBuuton
+            .setIcon("double-up-arrow-glyph")
+            .setTooltip("Scroll to Top")
+            .setClass("top")
+            .onClick(() => {
+                const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+                if (view) {
+                    view.setEphemeralState({"scroll":0});
+                }
+            });
         const current_file = app.workspace.getActiveFile()
         globalThis.headingdata = app.metadataCache.getFileCache(current_file).headings
         if (globalThis.headingdata) {
+            if (plugin.settings.ignoreTopHeader)
+                globalThis.headingdata = app.metadataCache.getFileCache(current_file).headings.slice(1);
             globalThis.headingdata.forEach((heading: HeadingCache, index: number) => {
                 const view = app.workspace.getActiveViewOfType(MarkdownView)
                 createli(view, ul_dom, heading, index)
@@ -159,7 +178,7 @@ export function CreatToc(
         if (!float_toc_dom) {
             const floatingTocWrapper = createEl("div");
             floatingTocWrapper.addClass("floating-toc-div");
-        
+
             genToc(view.contentEl, floatingTocWrapper)
         } else return;
     }

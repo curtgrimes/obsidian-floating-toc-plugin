@@ -22,7 +22,8 @@ Please Refer: [How to install Obsidian Plugins](https://forum.obsidian.md/t/plug
 2. The table of contents tracks the current scrolling position and highlights it synchronously
 3. ctrl + click on the floating toc to collapse/expand the current directory.
 4. Support popout multi-window mode
-
+5. Support synchronized display  of current header and parent header
+6. Turn on more appearance settings. Please install the style setting plugin
 
 ### Full Vault showcase
 

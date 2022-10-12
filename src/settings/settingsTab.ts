@@ -1,5 +1,5 @@
 import type FloatingToc from "src/main";
-import { App,Setting, PluginSettingTab, ButtonComponent } from "obsidian";
+import { App, Setting, PluginSettingTab, ButtonComponent } from "obsidian";
 import { POSITION_STYLES } from "src/settings/settingsData";
 import { selfDestruct } from "src/main";
 import { CreatToc } from "src/components/floatingtocUI"
@@ -56,45 +56,81 @@ export class FlotingTOCSettingTab extends PluginSettingTab {
             this.plugin.settings.positionStyle = positionStyle;
             this.plugin.saveSettings();
             setTimeout(() => {
+              this.display();
               dispatchEvent(new Event("refresh-toc"));
             }, 100);
           });
       });
-    containerEl.createEl("h2", { text: t("Plugin Style Settings") });
-   
-    const isEnabled =  app.plugins.enabledPlugins.has("obsidian-style-settings");
-    if(isEnabled)
-    {
-    let button = new ButtonComponent(containerEl);
-    button
-      .setIcon("palette")
-      .setClass("tiny")
-      .setButtonText("🎨 Open style settings")
-      .onClick(() => {
-        app.setting.open();
-        app.setting.openTabById("obsidian-style-settings");
-      });
-    }else
-    {
-      containerEl.createEl("span", { text: "" }).createEl("a", {
-        text: "Please install or enable the style-settings plugin",
-        href: "obsidian://show-plugin?id=obsidian-style-settings",
-      })
-    }
-    /*     new Setting(containerEl)
-          .setName(t('Ignore top-level headers')
-          )
-          .setDesc(
-            t("Select whether to ignore the top-level headings. When turned on, the top-level headings in the current note are not displayed in the floating TOC.")
-          )
-          .addToggle(toggle => toggle.setValue(this.plugin.settings?.ignoreTopHeader)
-          .onChange((value) => {
+      if(this.plugin.settings.positionStyle=="right"){
+      new Setting(containerEl)
+      .setName(t('Left Aligned')
+      )
+      .setDesc(
+        t("whether it is left or right aligned When the floating toc is on the right")
+      )
+      .addToggle(toggle => toggle.setValue(this.plugin.settings?.isLeft)
+        .onChange((value) => {
+          this.plugin.settings.isLeft = value;
+          this.plugin.saveSettings();
+          setTimeout(() => {
+            this.display();
+            dispatchEvent(new Event("refresh-toc"));
+          }, 100);
+        }));
+      }
+    new Setting(containerEl)
+      .setName(t('Mobile enabled or not')
+      )
+      .setDesc(
+        t("Whether to enable the plugin for the mobile client, the default is enabled.")
+      )
+      .addToggle(toggle => toggle.setValue(this.plugin.settings?.isLoadOnMobile)
+        .onChange((value) => {
+          this.plugin.settings.isLoadOnMobile = value;
+          this.plugin.saveSettings();
+          setTimeout(() => {
+            dispatchEvent(new Event("refresh-toc"));
+          }, 100);
+        }));
+     new Setting(containerEl)
+      .setName(t('Ignore top-level headers')
+      )
+      .setDesc(
+        t("Select whether to ignore the top-level headings. When turned on, the top-level headings in the current note are not displayed in the floating TOC.")
+      )
+      .addToggle(toggle => toggle.setValue(this.plugin.settings?.ignoreTopHeader)
+        .onChange((value) => {
           this.plugin.settings.ignoreTopHeader = value;
           this.plugin.saveSettings();
           setTimeout(() => {
             dispatchEvent(new Event("refresh-toc"));
           }, 100);
-      })); */
+        })); 
+    containerEl.createEl("h2", { text: t("Plugin Style Settings") });
+
+    const isEnabled = app.plugins.enabledPlugins.has("obsidian-style-settings");
+    if (isEnabled) {
+      
+      containerEl.createEl("p", { text: "🔔Notice: " })
+      .createEl("p", {
+        text: t("If the floating Toc option is not found in the style setting, please reload the style setting plugin (turn it off and on again)")
+      });
+      let button = new ButtonComponent(containerEl);
+      button
+        .setIcon("palette")
+        .setClass("tiny")
+        .setButtonText("🎨 Open style settings")
+        .onClick(() => {
+          app.setting.open();
+          setTimeout(() => app.setting.openTabById("obsidian-style-settings"), 300);
+        });
+    } else {
+      containerEl.createEl("span", { text: "" }).createEl("a", {
+        text: "Please install or enable the style-settings plugin",
+        href: "obsidian://show-plugin?id=obsidian-style-settings",
+      })
+    }
+
 
     const cDonationDiv = containerEl.createEl("div", {
       cls: "cDonationSection",
