@@ -1,5 +1,5 @@
 import { debounce, Platform, requireApiVersion, MarkdownView, Plugin, HeadingCache, App } from "obsidian";
-import { CreatToc, createli, renderHeader } from "src/components/floatingtocUI"
+import { creatToc, createLi, renderHeader } from "src/components/floatingtocUI"
 import { FlotingTOCSettingTab } from "src/settings/settingsTab";
 import { FlotingTOCSetting, DEFAULT_SETTINGS } from "src/settings/settingsData";
 
@@ -74,7 +74,7 @@ export function refresh_node(view: MarkdownView) {
 						}
 					} else {
 
-						createli(view, ul_dom, el, i)
+						createLi(view, ul_dom, el, i)
 					}
 				});
 			}
@@ -206,7 +206,7 @@ export default class FloatingToc extends Plugin {
 		requireApiVersion("0.15.0") ? activeDocument = activeWindow.document : activeDocument = window.document;
 		await this.loadSettings();
 		const updateHeadingsForView = (view: MarkdownView) => {
-			view ? refresh_node(view) ? false : CreatToc(app, this) : false
+			view ? refresh_node(view) ? false : creatToc(app, this) : false
 
 		};
 		let isLoadOnMobile = this.settings.isLoadOnMobile
@@ -317,7 +317,9 @@ export default class FloatingToc extends Plugin {
 				leaf.doc.addEventListener("scroll", handleScroll, true)
 			});
 		}
-		if (app.workspace.layoutReady) app.workspace.trigger("parse-style-settings");
+		app.workspace.onLayoutReady(() => {
+			app.workspace.trigger("parse-style-settings");
+		});
 
 	}
 

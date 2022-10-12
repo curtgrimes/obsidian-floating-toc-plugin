@@ -33,9 +33,9 @@ export async function renderHeader(
     atag.onclick = function (event) {
         let startline = parseInt(subcontainer.parentElement.getAttribute("data-line")) ?? 0
         if (event.ctrlKey) {
-            foldheader(view, startline)
+            foldHeader(view, startline)
         } else {
-            openFileToLine(view, startline)
+            openFiletoline(view, startline)
             let prevLocation = subcontainer.parentElement.parentElement.querySelector(".text-wrap.located")
             if (prevLocation) {
                 prevLocation.removeClass("located")
@@ -44,18 +44,26 @@ export async function renderHeader(
         }
     }
     let par = subcontainer.querySelector("p");
+    let par_a = subcontainer.querySelector("p a");
+    if (par_a) {
+        par_a.insertAdjacentHTML('beforebegin', par_a.textContent);
+        subcontainer.querySelector("p a").remove();
+    }
     if (par) {
-        const regex = /<a[^>]*>|<\/[^>]*a>/gm; //删除所有a标签
+        //  const regex = /<a[^>]*>|<\/[^>]*a>/gm; //删除所有a标签
         //const regex = /(?<=\>[^<]*?) /g; //删除所有空白符
-        if (prelist) atag.innerHTML = prelist + par.innerHTML.replace(regex, '');
-        else atag.innerHTML = par.innerHTML.replace(regex, '');
-        subcontainer.removeChild(par);
+
+        atag.insertAdjacentElement('afterbegin', par);
+        if (prelist) {
+            atag.insertAdjacentHTML('afterbegin', prelist);
+        }
+
     }
 
 
 }
 
-export async function createli(view: MarkdownView, ul_dom: HTMLElement, heading: HeadingCache, index: number) {
+export async function createLi(view: MarkdownView, ul_dom: HTMLElement, heading: HeadingCache, index: number) {
     let li_dom = ul_dom.createEl("li")
     li_dom.addClass("heading-list-item")
     li_dom.setAttribute("data-level", heading.level.toString())
@@ -74,7 +82,7 @@ export async function createli(view: MarkdownView, ul_dom: HTMLElement, heading:
     line_dom.createDiv().addClass("line")
 }
 
-const openFileToLine = (view: MarkdownView, lineNumber: number) => {
+const openFiletoline = (view: MarkdownView, lineNumber: number) => {
     //const current_file = plugin.app.workspace.getActiveFile()
     //     console.log("line number", lineNumber);
     // let leaf = plugin.app.workspace.getLeaf(false);
@@ -82,7 +90,7 @@ const openFileToLine = (view: MarkdownView, lineNumber: number) => {
         eState: { line: lineNumber },
     });
 };
-const foldheader = (view: MarkdownView, startline: number) => {
+const foldHeader = (view: MarkdownView, startline: number) => {
     // const view = plugin.app.workspace.getActiveViewOfType(MarkdownView)
     const existingFolds = view?.currentMode.getFoldInfo()?.folds ?? [];
     const headfrom = startline
@@ -104,7 +112,7 @@ const foldheader = (view: MarkdownView, startline: number) => {
     view?.onMarkdownFold();
 }
 
-export function CreatToc(
+export function creatToc(
     app: App,
     plugin: FloatingToc
 ): void {
@@ -150,7 +158,7 @@ export function CreatToc(
             .onClick(() => {
                 const view = this.app.workspace.getActiveViewOfType(MarkdownView);
                 if (view) {
-                    view.setEphemeralState({"scroll":0});
+                    view.setEphemeralState({ "scroll": 0 });
                 }
             });
         const current_file = app.workspace.getActiveFile()
@@ -160,7 +168,7 @@ export function CreatToc(
                 globalThis.headingdata = app.metadataCache.getFileCache(current_file).headings.slice(1);
             globalThis.headingdata.forEach((heading: HeadingCache, index: number) => {
                 const view = app.workspace.getActiveViewOfType(MarkdownView)
-                createli(view, ul_dom, heading, index)
+                createLi(view, ul_dom, heading, index)
             });
 
             currentleaf

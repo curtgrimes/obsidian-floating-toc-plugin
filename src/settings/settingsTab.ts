@@ -2,7 +2,7 @@ import type FloatingToc from "src/main";
 import { App, Setting, PluginSettingTab, ButtonComponent } from "obsidian";
 import { POSITION_STYLES } from "src/settings/settingsData";
 import { selfDestruct } from "src/main";
-import { CreatToc } from "src/components/floatingtocUI"
+import { creatToc } from "src/components/floatingtocUI"
 import { t } from 'src/translations/helper';
 
 
@@ -16,7 +16,7 @@ export class FlotingTOCSettingTab extends PluginSettingTab {
     this.plugin = plugin;
     addEventListener("refresh-toc", () => {
       selfDestruct();
-      CreatToc(app, this.plugin);
+      creatToc(app, this.plugin);
     });
   }
 
