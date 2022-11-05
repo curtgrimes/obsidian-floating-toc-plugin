@@ -8,11 +8,13 @@ export interface FlotingTOCSetting {
   positionStyle: string;
   isLoadOnMobile:boolean;
   isLeft:boolean;
+  isDefaultPin:boolean;
 }
 
 export const DEFAULT_SETTINGS: FlotingTOCSetting = {
   ignoreTopHeader: false,
   positionStyle: "left",
   isLoadOnMobile: true,
-  isLeft: false
+  isLeft: false,
+  isDefaultPin:false
 };

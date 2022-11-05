@@ -3,9 +3,6 @@ import "obsidian";
 
  
 
-declare global {
-    var headingdata: any;
-}
 
 
 declare module "obsidian" {

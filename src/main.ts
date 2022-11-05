@@ -20,7 +20,7 @@ export function selfDestruct() {
 
 }
 
-export function refresh_node(view: MarkdownView) {
+export function refresh_node(plugin: FloatingToc, view: MarkdownView) {
 	requireApiVersion("0.15.0") ? activeDocument = activeWindow.document : activeDocument = window.document;
 	//let currentleaf = activeDocument?.querySelector(".workspace-leaf.mod-active");
 	//let view=plugin.app.workspace.getActiveViewOfType(MarkdownView)
@@ -31,7 +31,7 @@ export function refresh_node(view: MarkdownView) {
 		if (!ul_dom)
 			ul_dom = float_toc_dom.createEl("ul"), ul_dom.addClass("floating-toc")
 		let li_dom = float_toc_dom?.querySelectorAll("li.heading-list-item")
-		let headingdata = globalThis.headingdata
+		let headingdata = plugin.headingdata
 		//console.log(headingdata,"headingdata")
 		if (headingdata) {
 			//	console.log("refresh_node")
@@ -97,7 +97,7 @@ function siblingElems(elem: Element) {
 	}
 	return nodes;
 }
-function _handleScroll(evt: Event) {
+function _handleScroll(app: App, plugin:FloatingToc, evt: Event) {
 	let target = evt.target as HTMLElement
 	if (target.parentElement?.classList.contains("cm-editor") || target.parentElement?.classList.contains("markdown-reading-view")) {
 		const view = app.workspace.getActiveViewOfType(MarkdownView)
@@ -112,8 +112,8 @@ function _handleScroll(evt: Event) {
 					headline.push(li_dom[i].getAttribute("data-line"))
 				}) */
 
-			//	console.log(current_line, "current_line")
-			let headings = globalThis.headingdata
+			//	console.log(current_line, "cthisurrent_line")
+			let headings = plugin.headingdata;
 			let i = headings?.length ?? 0
 			let floattoc = view.contentEl.querySelector(".floating-toc")
 			if (floattoc) {
@@ -130,7 +130,7 @@ function _handleScroll(evt: Event) {
 					if (curLocation) curLocation.addClass("located");
 
 
-					let level = parseInt(curLocation.getAttribute("data-level"))
+					let level = parseInt(curLocation?.getAttribute("data-level"))
 					level = level > 1 ? level - 1 : 1;
 					let siblings = siblingElems(curLocation);
 					let focusele = floattoc?.querySelector(`li.focus`)
@@ -138,11 +138,10 @@ function _handleScroll(evt: Event) {
 						focusele.removeClass("focus")
 					}
 					siblings.some(element => {
-						if ((element as HTMLInputElement).dataset['level'] <= level.toString()) 
-						{ element.addClass('focus'); return true}
+						if ((element as HTMLInputElement).dataset['level'] <= level.toString()) { element.addClass('focus'); return true }
 					});
 
-					
+
 					let Location = floattoc.querySelector(".heading-list-item")
 					setTimeout(() => Location.scrollIntoViewIfNeeded(), 300)
 
@@ -151,7 +150,7 @@ function _handleScroll(evt: Event) {
 					while (--i >= 0) {
 						if (headings[i].position.start.line <= current_line) {
 							current_heading = headings[i]
-							//	console.log(current_heading)
+						//	console.log(current_heading,"current_heading")
 							line = headings[i].position.start.line
 							break
 						}
@@ -169,9 +168,8 @@ function _handleScroll(evt: Event) {
 
 
 					if (!line && floattoc) line = firstline
-					//	console.log(line)
 					let curLocation = floattoc?.querySelector(`li[data-line='${line}']`)
-
+				//	console.log(curLocation, "curLocation")
 					if (curLocation) {
 						if (line == lastline || line == firstline) {
 							curLocation.addClass("located");
@@ -186,8 +184,7 @@ function _handleScroll(evt: Event) {
 									focusele.removeClass("focus")
 								}
 								siblings.some(element => {
-									if ((element as HTMLInputElement).dataset['level'] <= level.toString()) 
-									{ element.addClass('focus'); return true}
+									if ((element as HTMLInputElement).dataset['level'] <= level.toString()) { element.addClass('focus'); return true }
 								});
 							}
 
@@ -199,14 +196,16 @@ function _handleScroll(evt: Event) {
 		}
 	}
 }
-const handleScroll = debounce(_handleScroll, 200)
 export default class FloatingToc extends Plugin {
-	settings: any;
+	app: App;
+	settings: FlotingTOCSetting;
+	headingdata: any;
+
 	async onload() {
 		requireApiVersion("0.15.0") ? activeDocument = activeWindow.document : activeDocument = window.document;
 		await this.loadSettings();
 		const updateHeadingsForView = (view: MarkdownView) => {
-			view ? refresh_node(view) ? false : creatToc(app, this) : false
+			view ? refresh_node(this, view) ? false : creatToc(app, this) : false
 
 		};
 		let isLoadOnMobile = this.settings.isLoadOnMobile
@@ -239,10 +238,15 @@ export default class FloatingToc extends Plugin {
 				if (view) {
 					const current_file = this.app.workspace.getActiveFile()
 					let heading = this.app.metadataCache.getFileCache(current_file).headings
-					globalThis.headingdata = heading
+					let cleanheading: HeadingCache[] = []
+					heading?.map((item: HeadingCache) => {
+						item.heading = item.heading.replace(/<\/?[\s\S]*?(?:".*")*>/g, ""); // clean html tags
+						cleanheading.push(item)
+					})
+					this.headingdata = cleanheading;
 					if (this.settings.ignoreTopHeader)
-						globalThis.headingdata = heading.slice(1);
-					//		console.log("refresh")
+						this.headingdata = heading.slice(1);
+
 					refresh(view);
 				}
 			}
@@ -266,19 +270,26 @@ export default class FloatingToc extends Plugin {
 				const current_file = view.file
 
 				let heading = this.app.metadataCache.getFileCache(current_file).headings
-				let newheading = heading?.map(item => {
+				let cleanheading: HeadingCache[] = []
+				heading?.map((item: HeadingCache) => {
+					item.heading = item.heading.replace(/<\/?[\s\S]*?(?:".*")*>/g, ""); // clean html tags
+					cleanheading.push(item)
+				})
+				let newheading = cleanheading?.map(item => {
 					return item.level + item.heading + item.position.start.line
 				})
-				let newheadingdata = globalThis.headingdata?.map((item: HeadingCache) => {
+				let newheadingdata = this.headingdata?.map((item: HeadingCache) => {
 					return item.level + item.heading + item.position.start.line
 				})
 				if (JSON.stringify(newheadingdata) == JSON.stringify(newheading))
 					return  //标题结构行号没有变化不更新
 				else {
 					//	console.log("refresh")
-					globalThis.headingdata = heading
+
+					this.headingdata = cleanheading;
+
 					if (this.settings.ignoreTopHeader)
-						globalThis.headingdata = heading.slice(1);
+						this.headingdata = cleanheading.slice(1);
 					refresh(view)
 				}
 			}
@@ -308,13 +319,17 @@ export default class FloatingToc extends Plugin {
 				); */
 
 
-		activeDocument.addEventListener("scroll", handleScroll, true)
+		activeDocument.addEventListener("scroll", (event) => {
+			this.handleScroll(this.app,this, event)
+		}, true)
 		this.addSettingTab(new FlotingTOCSettingTab(this.app, this));
 
 		updateHeadingsForView(this.app.workspace.getActiveViewOfType(MarkdownView));
 		if (requireApiVersion("0.15.0")) {
 			this.app.workspace.on('window-open', (leaf) => {
-				leaf.doc.addEventListener("scroll", handleScroll, true)
+				leaf.doc.addEventListener("scroll", (event) => {
+					this.handleScroll(this.app,this, event)
+				}, true)
 			});
 		}
 		app.workspace.onLayoutReady(() => {
@@ -323,10 +338,19 @@ export default class FloatingToc extends Plugin {
 
 	}
 
+
+	handleScroll = (app: App, plugin:FloatingToc, evt: Event) => debounce(_handleScroll(app, plugin,evt), 200)
+
+
 	onunload() {
 		requireApiVersion("0.15.0") ? activeDocument = activeWindow.document : activeDocument = window.document;
-		activeDocument.removeEventListener("scroll", handleScroll, true)
+		activeDocument.removeEventListener("scroll", (event) => {
+			this.handleScroll(this.app, this,event)
+		}, true)
 		selfDestruct();
+	}
+	setHeadingdata(content: HeadingCache): void {
+		this.headingdata = content;
 	}
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());

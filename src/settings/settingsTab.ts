@@ -61,23 +61,23 @@ export class FlotingTOCSettingTab extends PluginSettingTab {
             }, 100);
           });
       });
-      if(this.plugin.settings.positionStyle=="right"){
+    if (this.plugin.settings.positionStyle == "right") {
       new Setting(containerEl)
-      .setName(t('Left Aligned')
-      )
-      .setDesc(
-        t("whether it is left or right aligned When the floating toc is on the right")
-      )
-      .addToggle(toggle => toggle.setValue(this.plugin.settings?.isLeft)
-        .onChange((value) => {
-          this.plugin.settings.isLeft = value;
-          this.plugin.saveSettings();
-          setTimeout(() => {
-            this.display();
-            dispatchEvent(new Event("refresh-toc"));
-          }, 100);
-        }));
-      }
+        .setName(t('Left Aligned')
+        )
+        .setDesc(
+          t("whether it is left or right aligned When the floating toc is on the right")
+        )
+        .addToggle(toggle => toggle.setValue(this.plugin.settings?.isLeft)
+          .onChange((value) => {
+            this.plugin.settings.isLeft = value;
+            this.plugin.saveSettings();
+            setTimeout(() => {
+              this.display();
+              dispatchEvent(new Event("refresh-toc"));
+            }, 100);
+          }));
+    }
     new Setting(containerEl)
       .setName(t('Mobile enabled or not')
       )
@@ -92,7 +92,7 @@ export class FlotingTOCSettingTab extends PluginSettingTab {
             dispatchEvent(new Event("refresh-toc"));
           }, 100);
         }));
-     new Setting(containerEl)
+    new Setting(containerEl)
       .setName(t('Ignore top-level headers')
       )
       .setDesc(
@@ -105,16 +105,27 @@ export class FlotingTOCSettingTab extends PluginSettingTab {
           setTimeout(() => {
             dispatchEvent(new Event("refresh-toc"));
           }, 100);
-        })); 
+        }));
+    new Setting(containerEl)
+      .setName(t('Default Pin')
+      )
+      .addToggle(toggle => toggle.setValue(this.plugin.settings?.isDefaultPin)
+        .onChange((value) => {
+          this.plugin.settings.isDefaultPin = value;
+          this.plugin.saveSettings();
+          setTimeout(() => {
+            dispatchEvent(new Event("refresh-toc"));
+          }, 100);
+        }));
     containerEl.createEl("h2", { text: t("Plugin Style Settings") });
 
     const isEnabled = app.plugins.enabledPlugins.has("obsidian-style-settings");
     if (isEnabled) {
-      
+
       containerEl.createEl("p", { text: "🔔Notice: " })
-      .createEl("p", {
-        text: t("If the floating Toc option is not found in the style setting, please reload the style setting plugin (turn it off and on again)")
-      });
+        .createEl("p", {
+          text: t("If the floating Toc option is not found in the style setting, please reload the style setting plugin (turn it off and on again)")
+        });
       let button = new ButtonComponent(containerEl);
       button
         .setIcon("palette")

@@ -5,6 +5,7 @@ export default {
   'Ignore top-level headers': '是否忽略顶级目录',
   'Select whether to ignore the top-level headings. When turned on, the top-level headings in the current note are not displayed in the floating TOC.': '选择是否忽略顶级标题，开启后当前文档中最顶级的标题不显示在浮动目录中。',
   'Plugin Settings': '插件设置',
+  'Default Pin':'是否默认钉在笔记上',
   'Plugin Style Settings': '插件样式设置',
   'Mobile enabled or not': '是否在移动端启用',
   'Whether to enable the plugin for the mobile client, the default is enabled.':'移动客户端是否启用插件，默认启用。',

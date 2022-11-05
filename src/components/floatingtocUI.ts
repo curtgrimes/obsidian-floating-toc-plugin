@@ -1,6 +1,6 @@
 
 import type FloatingToc from "src/main";
-import { App, requireApiVersion, MarkdownView, Component, HeadingCache, MarkdownRenderer, ButtonComponent, View } from "obsidian";
+import { App, Notice, requireApiVersion, MarkdownView, Component, HeadingCache, MarkdownRenderer, ButtonComponent, View } from "obsidian";
 
 
 export async function renderHeader(
@@ -118,7 +118,16 @@ export function creatToc(
 ): void {
 
     const genToc = (currentleaf: HTMLElement, floatingTocWrapper: HTMLDivElement) => {
+        const current_file = app.workspace.getActiveFile()
 
+        let heading = app.metadataCache.getFileCache(current_file).headings
+        let cleanheading: HeadingCache[] = []
+        heading?.map((item: HeadingCache) => {
+            item.heading = item.heading.replace(/<\/?[\s\S]*?(?:".*")*>/g, ""); // clean html tags
+            cleanheading.push(item)
+        })
+        plugin.headingdata = cleanheading;
+        if (plugin.headingdata.length == 0) return;
         if (plugin.settings.positionStyle == "right")
             floatingTocWrapper.addClass("floating-right"), floatingTocWrapper.removeClass("floating-left")
         else if (plugin.settings.positionStyle == "left")
@@ -161,34 +170,47 @@ export function creatToc(
                     view.setEphemeralState({ "scroll": 0 });
                 }
             });
-        const current_file = app.workspace.getActiveFile()
-        globalThis.headingdata = app.metadataCache.getFileCache(current_file).headings
-        if (globalThis.headingdata) {
-            if (plugin.settings.ignoreTopHeader)
-                globalThis.headingdata = app.metadataCache.getFileCache(current_file).headings.slice(1);
-            globalThis.headingdata.forEach((heading: HeadingCache, index: number) => {
-                const view = app.workspace.getActiveViewOfType(MarkdownView)
-                createLi(view, ul_dom, heading, index)
+
+        let CopyBuuton = new ButtonComponent(toolbar);
+        CopyBuuton
+            .setIcon("copy")
+            .setTooltip("copy to clipboard")
+            .setClass("copy")
+            .onClick(async () => {
+                let headers = plugin.headingdata.map((h: HeadingCache) => {
+                    return "    ".repeat(h.level - 1) + h.heading
+                })
+                await navigator.clipboard.writeText(headers.join("\n"))
+                new Notice("Copied")
             });
 
-            currentleaf
-                ?.querySelector(".markdown-source-view")
-                .insertAdjacentElement("beforebegin", floatingTocWrapper);
-        }
+
+        if (plugin.settings.ignoreTopHeader)
+        plugin.headingdata = app.metadataCache.getFileCache(current_file).headings.slice(1);
+        plugin.headingdata.forEach((heading: HeadingCache, index: number) => {
+            const view = app.workspace.getActiveViewOfType(MarkdownView)
+            createLi(view, ul_dom, heading, index)
+        });
+
+        currentleaf
+            ?.querySelector(".markdown-source-view")
+            .insertAdjacentElement("beforebegin", floatingTocWrapper);
+
 
     };
     let Markdown = this.app.workspace.getActiveViewOfType(MarkdownView);
     if (Markdown) {
         requireApiVersion("0.15.0") ? activeDocument = activeWindow.document : activeDocument = window.document;
         let view = plugin.app.workspace.getActiveViewOfType(MarkdownView)
-        let float_toc_dom = view.contentEl?.querySelector(".floating-toc-div");
-
-        if (!float_toc_dom) {
-            const floatingTocWrapper = createEl("div");
-            floatingTocWrapper.addClass("floating-toc-div");
-
-            genToc(view.contentEl, floatingTocWrapper)
-        } else return;
+        if (view) {
+            let float_toc_dom = view.contentEl?.querySelector(".floating-toc-div");
+            if (!float_toc_dom) {
+                const floatingTocWrapper = createEl("div");
+                floatingTocWrapper.addClass("floating-toc-div");
+                if (plugin.settings.isDefaultPin) floatingTocWrapper.addClass("pin")
+                genToc(view.contentEl, floatingTocWrapper)
+            } else return;
+        }
     }
 
 }

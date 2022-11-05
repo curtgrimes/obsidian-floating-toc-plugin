@@ -4,6 +4,7 @@ export default {
     'Ignore top-level headers':'Ignore top-level headers',
     'Select whether to ignore the top-level headings. When turned on, the top-level headings in the current note are not displayed in the floating TOC.':'Select whether to ignore the top-level headings. When turned on, the top-level headings in the current note are not displayed in the floating TOC.',    
     'Plugin Settings':'Plugin Settings',
+    'Default Pin':'Default Pin',
     'Plugin Style Settings': 'Plugin Style Settings',
     'Mobile enabled or not':'Mobile enabled or not',
     'Whether to enable the plugin for the mobile client, the default is enabled.':'Whether to enable the plugin for the mobile client, the default is enabled.',
