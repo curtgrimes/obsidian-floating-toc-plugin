@@ -97,7 +97,7 @@ function siblingElems(elem: Element) {
 	}
 	return nodes;
 }
-function _handleScroll(app: App, plugin:FloatingToc, evt: Event) {
+function _handleScroll(app: App, plugin:FloatingToc, evt: Event):any {
 	let target = evt.target as HTMLElement
 	if (target.parentElement?.classList.contains("cm-editor") || target.parentElement?.classList.contains("markdown-reading-view")) {
 		const view = app.workspace.getActiveViewOfType(MarkdownView)

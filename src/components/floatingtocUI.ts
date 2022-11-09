@@ -32,7 +32,7 @@ export async function renderHeader(
     atag.addClass("text")
     atag.onclick = function (event) {
         let startline = parseInt(subcontainer.parentElement.getAttribute("data-line")) ?? 0
-        if (event.ctrlKey) {
+        if (event.ctrlKey || event.metaKey) {
             foldHeader(view, startline)
         } else {
             openFiletoline(view, startline)
@@ -44,20 +44,13 @@ export async function renderHeader(
         }
     }
     let par = subcontainer.querySelector("p");
-    let par_a = subcontainer.querySelector("p a");
-    if (par_a) {
-        par_a.insertAdjacentHTML('beforebegin', par_a.textContent);
-        subcontainer.querySelector("p a").remove();
-    }
     if (par) {
-        //  const regex = /<a[^>]*>|<\/[^>]*a>/gm; //删除所有a标签
+        const regex = /<a[^>]*>|<\/[^>]*a>/gm; //删除所有a标签
         //const regex = /(?<=\>[^<]*?) /g; //删除所有空白符
-
-        atag.insertAdjacentElement('afterbegin', par);
-        if (prelist) {
-            atag.insertAdjacentHTML('afterbegin', prelist);
-        }
-
+        if (prelist)
+            atag.innerHTML = prelist + par.innerHTML.replace(regex, '');
+        else atag.innerHTML = par.innerHTML.replace(regex, '');
+        subcontainer.removeChild(par);
     }
 
 
