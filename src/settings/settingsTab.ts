@@ -36,37 +36,53 @@ export class FlotingTOCSettingTab extends PluginSettingTab {
       text: "|English  ",
       href: "https://github.com/cumany/obsidian-floating-toc-plugin/blob/master/README.md",
     });
-    containerEl.createEl("p", { text: "🔑TIPS: " })
-      .createEl("p", {
-        text: "ctrl + click on the floating toc to collapse/expand the header."
-      });
+
+    let tipsE1 = containerEl.createEl("div");
+    tipsE1.addClass('callout');
+    tipsE1.setAttribute("data-callout", "info");
+    let tips_titleE1 = tipsE1.createEl("div", { text: "🔑TIPS:" })
+    tips_titleE1.addClass("callout-title")
+    tips_titleE1.createEl("br");
+    let tips_contentE1 = tipsE1.createEl("div",{
+      text: "ctrl + click on the floating toc to collapse/expand the header."
+    })
+    tips_contentE1.addClass("callout-content");
+ 
     containerEl.createEl("h2", { text: t("Plugin Settings") });
-    new Setting(containerEl)
-      .setName(t('Floating TOC position')
+    let posE1 = new Setting(containerEl)
+    posE1.setName(t('Floating TOC position')
+    )
+    if (this.plugin.settings.positionStyle == "both") {
+      posE1.setDesc(
+        t("When the panel is split left and right, the right side of the layout is aligned right and the left side of the panel is aligned left.")
       )
-      .setDesc(t('Floating TOC position, default on the left side of the notes')
+    } else if (this.plugin.settings.positionStyle == "right") {
+      posE1.setDesc(
+        t("Floating TOC position, on the right side of the notes")
       )
-      .addDropdown((dropdown) => {
-        let posotions: Record<string, string> = {};
-        POSITION_STYLES.map((posotion: string) => (posotions[posotion] = posotion));
-        dropdown.addOptions(posotions);
-        dropdown
-          .setValue(this.plugin.settings.positionStyle)
-          .onChange((positionStyle: string) => {
-            this.plugin.settings.positionStyle = positionStyle;
-            this.plugin.saveSettings();
-            setTimeout(() => {
-              this.display();
-              dispatchEvent(new Event("refresh-toc"));
-            }, 100);
-          });
-      });
-    if (this.plugin.settings.positionStyle == "right") {
+    } else
+      posE1.setDesc(t('Floating TOC position, default on the left side of the notes'));
+    posE1.addDropdown((dropdown) => {
+      let posotions: Record<string, string> = {};
+      POSITION_STYLES.map((posotion: string) => (posotions[posotion] = posotion));
+      dropdown.addOptions(posotions);
+      dropdown
+        .setValue(this.plugin.settings.positionStyle)
+        .onChange((positionStyle: string) => {
+          this.plugin.settings.positionStyle = positionStyle;
+          this.plugin.saveSettings();
+          setTimeout(() => {
+            this.display();
+            dispatchEvent(new Event("refresh-toc"));
+          }, 100);
+        });
+    });
+    if (this.plugin.settings.positionStyle != "left") {
       new Setting(containerEl)
-        .setName(t('Left Aligned')
+        .setName(t('Left alignment of TOC text')
         )
         .setDesc(
-          t("whether it is left or right aligned When the floating toc is on the right")
+          t("whether the text in TOC is left aligned")
         )
         .addToggle(toggle => toggle.setValue(this.plugin.settings?.isLeft)
           .onChange((value) => {
@@ -78,6 +94,7 @@ export class FlotingTOCSettingTab extends PluginSettingTab {
             }, 100);
           }));
     }
+
     new Setting(containerEl)
       .setName(t('Mobile enabled or not')
       )
@@ -117,26 +134,50 @@ export class FlotingTOCSettingTab extends PluginSettingTab {
             dispatchEvent(new Event("refresh-toc"));
           }, 100);
         }));
+    new Setting(containerEl)
+      .setName(t('Enable Tooltip')
+      )
+      .addToggle(toggle => toggle.setValue(this.plugin.settings?.isTooltip)
+        .onChange((value) => {
+          this.plugin.settings.isTooltip = value;
+          this.plugin.saveSettings();
+          setTimeout(() => {
+            dispatchEvent(new Event("refresh-toc"));
+          }, 100);
+        }));
     containerEl.createEl("h2", { text: t("Plugin Style Settings") });
-
+    let styleE1 = containerEl.createEl("div");
+    styleE1.addClass('callout');
+    styleE1.setAttribute("data-callout", "warning");
+    let titleE1 = styleE1.createEl("div", { text: "🔔 Notice: Please click the button again,If the floating-toc option is not found in the style settings" })
+    titleE1.addClass("callout-title")
+    let contentE1 = styleE1.createEl("div")
+    contentE1.addClass("callout-content");
     const isEnabled = app.plugins.enabledPlugins.has("obsidian-style-settings");
     if (isEnabled) {
-
-      containerEl.createEl("p", { text: "🔔Notice: " })
-        .createEl("p", {
-          text: t("If the floating Toc option is not found in the style setting, please reload the style setting plugin (turn it off and on again)")
-        });
-      let button = new ButtonComponent(containerEl);
+      contentE1.createEl("br");
+      let button = new ButtonComponent(contentE1);
       button
         .setIcon("palette")
-        .setClass("tiny")
+        .setClass("mod-cta")
         .setButtonText("🎨 Open style settings")
         .onClick(() => {
           app.setting.open();
-          setTimeout(() => app.setting.openTabById("obsidian-style-settings"), 300);
+          app.setting.openTabById("obsidian-style-settings");
+          app.workspace.trigger("parse-style-settings");
+          setTimeout(() => {
+            let floatsettingEI = app.setting.activeTab.containerEl.querySelector(".setting-item-heading[data-id='floating-toc-styles']")
+            if (floatsettingEI) { floatsettingEI.addClass?.("float-cta"); }
+            else {
+              app.workspace.trigger("parse-style-settings");
+              app.setting.activeTab.containerEl.querySelector(".setting-item-heading[data-id='floating-toc-styles']")?.addClass?.("float-cta");
+            }
+
+          }, 250);
         });
     } else {
-      containerEl.createEl("span", { text: "" }).createEl("a", {
+      contentE1.createEl("br");
+      contentE1.createEl("span", { text: "" }).createEl("a", {
         text: "Please install or enable the style-settings plugin",
         href: "obsidian://show-plugin?id=obsidian-style-settings",
       })

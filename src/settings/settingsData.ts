@@ -1,6 +1,6 @@
 
 
-export const POSITION_STYLES = ["left", "right"];
+export const POSITION_STYLES = ["left", "right","both"];
 
 
 export interface FlotingTOCSetting {
@@ -9,6 +9,7 @@ export interface FlotingTOCSetting {
   isLoadOnMobile:boolean;
   isLeft:boolean;
   isDefaultPin:boolean;
+  isTooltip:boolean;
 }
 
 export const DEFAULT_SETTINGS: FlotingTOCSetting = {
@@ -16,5 +17,6 @@ export const DEFAULT_SETTINGS: FlotingTOCSetting = {
   positionStyle: "left",
   isLoadOnMobile: true,
   isLeft: false,
-  isDefaultPin:false
+  isDefaultPin:false,
+  isTooltip:false
 };

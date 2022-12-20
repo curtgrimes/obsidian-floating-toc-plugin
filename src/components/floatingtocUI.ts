@@ -4,6 +4,7 @@ import { App, Notice, requireApiVersion, MarkdownView, Component, HeadingCache, 
 
 
 export async function renderHeader(
+    plugin: FloatingToc,
     view: MarkdownView,
     source: string,
     container?: HTMLElement,
@@ -21,6 +22,7 @@ export async function renderHeader(
         prelist = m[0]
         source = source.replace(regex2, '');
     }
+
     let subcontainer = container
     await MarkdownRenderer.renderMarkdown(
         source,
@@ -51,12 +53,21 @@ export async function renderHeader(
             atag.innerHTML = prelist + par.innerHTML.replace(regex, '');
         else atag.innerHTML = par.innerHTML.replace(regex, '');
         subcontainer.removeChild(par);
+        if (plugin.settings.isTooltip) {
+            subcontainer.setAttribute('aria-label', source)
+            if (plugin.settings.positionStyle == "right")
+                subcontainer.setAttribute('aria-label-position', 'left')
+            if (plugin.settings.positionStyle == "left")
+                subcontainer.setAttribute('aria-label-position', 'right')
+            if (plugin.settings.positionStyle == "both")
+                subcontainer.setAttribute('aria-label-position', 'top')
+        }
     }
 
 
 }
 
-export async function createLi(view: MarkdownView, ul_dom: HTMLElement, heading: HeadingCache, index: number) {
+export async function createLi(plugin: FloatingToc, view: MarkdownView, ul_dom: HTMLElement, heading: HeadingCache, index: number) {
     let li_dom = ul_dom.createEl("li")
     li_dom.addClass("heading-list-item")
     li_dom.setAttribute("data-level", heading.level.toString())
@@ -64,10 +75,7 @@ export async function createLi(view: MarkdownView, ul_dom: HTMLElement, heading:
     li_dom.setAttribute("data-line", heading.position.start.line.toString())
     let text_dom = li_dom.createEl("div")
     text_dom.addClass("text-wrap")
-
-
-
-    renderHeader(view, heading.heading, text_dom, view.file.path, null)
+    renderHeader(plugin, view, heading.heading, text_dom, view.file.path, null)
 
     // text.innerHTML = heading.heading
     let line_dom = li_dom.createEl("div")
@@ -122,9 +130,11 @@ export function creatToc(
         plugin.headingdata = cleanheading;
         if (plugin.headingdata.length == 0) return;
         if (plugin.settings.positionStyle == "right")
-            floatingTocWrapper.addClass("floating-right"), floatingTocWrapper.removeClass("floating-left")
+            floatingTocWrapper.addClass("floating-right"), floatingTocWrapper.removeClass("floating-left"), floatingTocWrapper.removeClass("floating-both")
         else if (plugin.settings.positionStyle == "left")
-            floatingTocWrapper.addClass("floating-left"), floatingTocWrapper.removeClass("floating-rigth")
+            floatingTocWrapper.addClass("floating-left"), floatingTocWrapper.removeClass("floating-rigth"), floatingTocWrapper.removeClass("floating-both")
+        else if (plugin.settings.positionStyle == "both")
+            floatingTocWrapper.addClass("floating-both"), floatingTocWrapper.removeClass("floating-left"), floatingTocWrapper.removeClass("floating-rigth")
         if (plugin.settings.isLeft)
             floatingTocWrapper.removeClass("alignLeft"), floatingTocWrapper.addClass("alignLeft")
         else floatingTocWrapper.removeClass("alignLeft")
@@ -179,10 +189,10 @@ export function creatToc(
 
 
         if (plugin.settings.ignoreTopHeader)
-        plugin.headingdata = app.metadataCache.getFileCache(current_file).headings.slice(1);
+            plugin.headingdata = app.metadataCache.getFileCache(current_file).headings.slice(1);
         plugin.headingdata.forEach((heading: HeadingCache, index: number) => {
             const view = app.workspace.getActiveViewOfType(MarkdownView)
-            createLi(view, ul_dom, heading, index)
+            createLi(plugin, view, ul_dom, heading, index)
         });
 
         currentleaf
