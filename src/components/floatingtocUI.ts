@@ -78,9 +78,9 @@ export async function createLi(plugin: FloatingToc, view: MarkdownView, ul_dom: 
     text_dom.addClass("text-wrap")
     renderHeader(plugin, view, heading.heading, text_dom, view.file.path, null)
 
-    // 初始隐藏大于H2的标签
+    // 初始隐藏一定层级的标签
     li_dom.classList.add("collapsed");
-    if (heading.level > 2) {
+    if (heading.level > plugin.settings.defaultExpansionLevel + 1) {
         li_dom.style.display ="none";
     }
     li_dom.addEventListener("click", () => { toggleCollapse(li_dom); });
