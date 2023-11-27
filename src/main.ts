@@ -145,7 +145,7 @@ function _handleScroll(app: App, plugin: FloatingToc, evt: Event): any {
 					});
 
 
-					let Location = floattoc.querySelector(".heading-list-item")
+					let Location : any = floattoc.querySelector(".heading-list-item")
 					setTimeout(() => Location.scrollIntoViewIfNeeded(), 300)
 
 				}
@@ -172,7 +172,7 @@ function _handleScroll(app: App, plugin: FloatingToc, evt: Event): any {
 
 
 					if (!line && floattoc) line = firstline
-					let curLocation = floattoc?.querySelector(`li[data-line='${line}']`)
+					let curLocation : any = floattoc?.querySelector(`li[data-line='${line}']`)
 					//console.log(curLocation, "curLocation")
 					if (curLocation) {
 						if (line == lastline || line == firstline) {

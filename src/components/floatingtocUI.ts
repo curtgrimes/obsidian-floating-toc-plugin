@@ -1,6 +1,7 @@
 
 import type FloatingToc from "src/main";
 import { App, Notice, requireApiVersion, MarkdownView, Component, HeadingCache, MarkdownRenderer, ButtonComponent, View } from "obsidian";
+import { toggleCollapse } from "./toggleCollapse"
 
 
 export async function renderHeader(
@@ -76,6 +77,13 @@ export async function createLi(plugin: FloatingToc, view: MarkdownView, ul_dom: 
     let text_dom = li_dom.createEl("div")
     text_dom.addClass("text-wrap")
     renderHeader(plugin, view, heading.heading, text_dom, view.file.path, null)
+
+    // 初始隐藏一定层级的标签
+    li_dom.classList.add("collapsed");
+    if (heading.level > plugin.settings.defaultExpansionLevel + 1) {
+        li_dom.style.display ="none";
+    }
+    li_dom.addEventListener("click", () => { toggleCollapse(li_dom); });
 
     // text.innerHTML = heading.heading
     let line_dom = li_dom.createEl("div")

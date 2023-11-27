@@ -96,6 +96,27 @@ export class FlotingTOCSettingTab extends PluginSettingTab {
     }
 
     new Setting(containerEl)
+      .setName("Default Expansion Level")
+      .setDesc("Set the default expansion level of headings for newly opened notes")
+      .addDropdown(dropdown => {
+        dropdown.addOptions({
+          '1': '1',
+          '2': '2',
+          '3': '3',
+          '4': '4',
+          '5': '5'
+        });
+        dropdown.setValue(this.plugin.settings.defaultExpansionLevel.toString())
+          .onChange((value) => {
+            this.plugin.settings.defaultExpansionLevel = parseInt(value);
+            this.plugin.saveSettings();
+            setTimeout(() => {
+              dispatchEvent(new Event("refresh-toc"));
+            }, 100);
+          });
+      });
+
+    new Setting(containerEl)
       .setName(t('Mobile enabled or not')
       )
       .setDesc(
@@ -109,6 +130,7 @@ export class FlotingTOCSettingTab extends PluginSettingTab {
             dispatchEvent(new Event("refresh-toc"));
           }, 100);
         }));
+
     new Setting(containerEl)
       .setName(t('Ignore top-level headers')
       )

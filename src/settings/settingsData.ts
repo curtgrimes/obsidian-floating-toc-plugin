@@ -10,6 +10,7 @@ export interface FlotingTOCSetting {
   isLeft:boolean;
   isDefaultPin:boolean;
   isTooltip:boolean;
+  defaultExpansionLevel:number
 }
 
 export const DEFAULT_SETTINGS: FlotingTOCSetting = {
@@ -17,6 +18,7 @@ export const DEFAULT_SETTINGS: FlotingTOCSetting = {
   positionStyle: "left",
   isLoadOnMobile: true,
   isLeft: false,
-  isDefaultPin:false,
-  isTooltip:false
+  isDefaultPin: false,
+  isTooltip: false,
+  defaultExpansionLevel: 5
 };
