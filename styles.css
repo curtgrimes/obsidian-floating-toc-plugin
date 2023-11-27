@@ -431,6 +431,10 @@ body.enable-heading-nowrap .heading-list-item .text-wrap .text {
   padding-left: 0.5rem;
   }
 
+.heading-list-item[data-level="2"] .text-wrap {
+  padding-left: 0.2rem;
+}
+
 .heading-list-item[data-level="2"] .text::after {
   content: "H2";
   font-size: 6px;
@@ -441,7 +445,7 @@ body.enable-heading-nowrap .heading-list-item .text-wrap .text {
 }
 
 .heading-list-item[data-level="3"] {
-  padding-left: 0.8rem;
+  padding-left: 1rem;
 }
 .heading-list-item[data-level="3"] .text-wrap {
   padding-left: 0.2rem;
@@ -457,10 +461,10 @@ body.enable-heading-nowrap .heading-list-item .text-wrap .text {
 }
 
 .heading-list-item[data-level="4"] {
-  padding-left: 1.1rem;
+  padding-left: 1.5rem;
 }
 .heading-list-item[data-level="4"] .text-wrap {
-  padding-left: 0.4rem;
+  padding-left: 0.2rem;
 }
 
 .heading-list-item[data-level="4"] .text::after {
@@ -473,10 +477,10 @@ body.enable-heading-nowrap .heading-list-item .text-wrap .text {
 }
 
 .heading-list-item[data-level="5"] {
-  padding-left: 1.4rem;
+  padding-left: 2rem;
 }
 .heading-list-item[data-level="5"] .text-wrap {
-  padding-left: 0.6rem;
+  padding-left: 0.2rem;
 }
 .heading-list-item[data-level="5"] .text::after {
   content: "H5";
@@ -488,10 +492,10 @@ body.enable-heading-nowrap .heading-list-item .text-wrap .text {
 }
 
 .heading-list-item[data-level="6"] {
-  padding-left: 1.6rem;
+  padding-left: 2.5rem;
 }
 .heading-list-item[data-level="6"] .text-wrap {
-  padding-left: 0.9rem;
+  padding-left: 0.2rem;
 }
 .heading-list-item[data-level="6"] .text::after {
   content: "H6";
@@ -871,10 +875,12 @@ margin-left: 0.2rem;
 /* 对于折叠状态 */
 .floating-toc-div.pin .heading-list-item[isCollapsed="true"] .heading-rendered::before,
 .floating-toc-div.hover .heading-list-item[isCollapsed="true"] .heading-rendered::before {
-    content: '▶'; 
+    /* content: '▶';  */
+    /* 源文件是src/resources/右键头，需要调整颜色和大小后转化成 URL encoded */
+    content: url("data:image/svg+xml,%3C%3Fxml version='1.0' standalone='no'%3F%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg t='1701099392052' class='icon' viewBox='0 0 1024 1024' version='1.1' xmlns='http://www.w3.org/2000/svg' p-id='4217' xmlns:xlink='http://www.w3.org/1999/xlink' width='0.65em' height='0.65em'%3E%3Cpath d='M757.792745 435.407215L419.597482 96.904967c-40.010393-40.010393-104.886579-40.010393-144.896972 0-40.010393 40.010393-40.010393 104.988908 0 144.9993L540.344959 507.855701 274.70051 773.807135c-40.010393 40.112721-40.010393 104.988908 0 144.9993 40.010393 40.010393 104.886579 40.010393 144.896972 0l338.092935-338.39992c40.112721-40.010393 40.112721-104.988908 0.102328-144.9993z' fill='%23d3c6aa' p-id='4218'%3E%3C/path%3E%3C/svg%3E%0A");
     position: absolute;
-    width: 0.6em; 
-    margin-left: -0.8em; /* 向左偏移自身宽度，使伪元素不占用li的空间 */
+    width: 0.65em; 
+    margin-left: -0.7em; /* 向左偏移自身宽度，使伪元素不占用li的空间 */
     left: 0; /* 使伪元素位于li的最左边 */
     top: 50%; /* 垂直居中 */
     transform: translateY(-50%); /* 偏移自身高度的一半以实现精确的垂直居中 */
@@ -884,10 +890,11 @@ margin-left: 0.2rem;
 /* 对于展开状态 */
 .floating-toc-div.pin .heading-list-item[isCollapsed="false"] .heading-rendered::before,
 .floating-toc-div.hover .heading-list-item[isCollapsed="false"] .heading-rendered::before {
-    content: '▼'; 
+    /* content: '▼';  */
+    content: url("data:image/svg+xml,%3C%3Fxml version='1.0' standalone='no'%3F%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg t='1701099490786' class='icon' viewBox='0 0 1026 1024' version='1.1' xmlns='http://www.w3.org/2000/svg' p-id='7616' xmlns:xlink='http://www.w3.org/1999/xlink' width='0.65em' height='0.65em'%3E%3Cpath d='M857.088 224.256q28.672-28.672 69.12-28.672t69.12 28.672q29.696 28.672 29.696 68.608t-29.696 68.608l-382.976 380.928q-12.288 14.336-30.72 19.968t-38.912 4.608-40.448-8.704-34.304-22.016l-376.832-374.784q-29.696-28.672-29.696-68.608t29.696-68.608q14.336-14.336 32.256-21.504t36.864-7.168 37.376 7.168 32.768 21.504l313.344 309.248z' fill='%23d3c6aa' p-id='7617'%3E%3C/path%3E%3C/svg%3E%0A");
     position: absolute;
-    width: 0.6em; 
-    margin-left: -0.8em; 
+    width: 0.65em; 
+    margin-left: -0.7em; 
     left: 0; 
     top: 50%; 
     transform: translateY(-50%);
