@@ -429,7 +429,7 @@ body.enable-heading-nowrap .heading-list-item .text-wrap .text {
 
 .heading-list-item[data-level="2"] {
   padding-left: 0.5rem;
-}
+  }
 
 .heading-list-item[data-level="2"] .text::after {
   content: "H2";
@@ -794,7 +794,8 @@ text-align: left;
 .floating-right.alignLeft .heading-list-item[data-level="6"] .text-wrap {
   padding-left: 2.1rem;
 }
-
+/* 这两个伪元素似乎不能很好地工作，暂时注释了 */
+/* 
 .heading-list-item.located  .text::before
 {
   content: "•";
@@ -804,7 +805,7 @@ text-align: left;
 {
   content: "▾";
   margin-right: 2px;
-}
+} */
 .floating-toc-div:not(:is(.hover,.pin)) .heading-list-item
 {
   width: 2rem;
@@ -862,3 +863,33 @@ margin-left: 0.2rem;
 }
 
 /******/
+/* 默认不显示伪元素 */
+/* .heading-list-item::before {
+    content: '';
+} */
+
+/* 对于折叠状态 */
+.floating-toc-div.pin .heading-list-item[isCollapsed="true"] .heading-rendered::before,
+.floating-toc-div.hover .heading-list-item[isCollapsed="true"] .heading-rendered::before {
+    content: '▶'; 
+    position: absolute;
+    width: 0.6em; 
+    margin-left: -0.8em; /* 向左偏移自身宽度，使伪元素不占用li的空间 */
+    left: 0; /* 使伪元素位于li的最左边 */
+    top: 50%; /* 垂直居中 */
+    transform: translateY(-50%); /* 偏移自身高度的一半以实现精确的垂直居中 */
+    text-align: center; /* 确保字符水平居中 */
+}
+
+/* 对于展开状态 */
+.floating-toc-div.pin .heading-list-item[isCollapsed="false"] .heading-rendered::before,
+.floating-toc-div.hover .heading-list-item[isCollapsed="false"] .heading-rendered::before {
+    content: '▼'; 
+    position: absolute;
+    width: 0.6em; 
+    margin-left: -0.8em; 
+    left: 0; 
+    top: 50%; 
+    transform: translateY(-50%);
+    text-align: center;
+}
