@@ -1,18 +1,27 @@
-export function toggleCollapse(liElement: HTMLElement) {
-    event.stopPropagation();
-    const isCollapsed = liElement.classList.contains("collapsed");
+// 判断是否存在子标题
+export function hasChildHeading(headingIndex: number, allHeadings: any) {
+    return headingIndex + 1 < allHeadings.length 
+            ?  allHeadings[headingIndex + 1].level > allHeadings[headingIndex].level
+            : false;
+}
 
-    if (isCollapsed) {
-        expandHeading(liElement);
-    } else {
-        collapseHeading(liElement);
+
+export function toggleCollapse(li: HTMLElement) {
+    event.stopPropagation();
+    const isCollapsed = li.getAttribute("isCollapsed")
+    if (isCollapsed !== null) { // 只处理有collapsed属性的父节点
+        if (isCollapsed === "true") {
+            expandHeading(li);
+        } else if (isCollapsed === "false") {
+            collapseHeading(li);
+        }
     }
 }
 
 // 仅展开当前标题的直接子标题
 function expandHeading(liElement: HTMLElement) {
     // 标记为展开
-    liElement.classList.remove("collapsed");
+    liElement.setAttribute("isCollapsed", "false");
 
     // 展开下一级子标题
     const currentLevel = parseInt(liElement.getAttribute("data-level"));
@@ -32,14 +41,18 @@ function expandHeading(liElement: HTMLElement) {
 
 function collapseHeading(liElement: HTMLElement) {
     // 标记为已折叠
-    liElement.classList.add("collapsed");
+    liElement.setAttribute("isCollapsed", "true");
 
     // 折叠所有子标题
     const currentLevel = parseInt(liElement.getAttribute("data-level"));
     let nextSibling = liElement.nextElementSibling as HTMLElement;
     while (nextSibling && parseInt(nextSibling.getAttribute("data-level")) > currentLevel) {
         nextSibling.style.display = 'none'; // 隐藏子标题
-        nextSibling.classList.add("collapsed"); // 标记为折叠状态
+        const isCollapsed = nextSibling.getAttribute("isCollapsed")
+        if (isCollapsed !== null) {
+            nextSibling.setAttribute("isCollapsed", "true"); // 标记为折叠状态
+        }
         nextSibling = nextSibling.nextElementSibling as HTMLElement;
     }
 }
+
