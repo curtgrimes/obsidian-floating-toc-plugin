@@ -32,15 +32,15 @@ export function refresh_node(plugin: FloatingToc, view: MarkdownView) {
 			ul_dom = float_toc_dom.createEl("ul"), ul_dom.addClass("floating-toc")
 		let li_dom = float_toc_dom?.querySelectorAll("li.heading-list-item")
 		let headingdata = plugin.headingdata
-		console.log(headingdata,"headingdata")
+	
 		if (plugin.settings.ignoreHeaders)
         {
             let levelsToFilter = plugin.settings.ignoreHeaders.split("\n");
             headingdata = plugin.headingdata?.filter((item: { level: { toString: () => string; }; }) => !levelsToFilter.includes(item.level.toString()));
         }
-		console.log(headingdata,"headingdata2")
+	
 		if (headingdata) {
-			console.log("refresh_node")
+		
 			if (li_dom.length >= headingdata.length) {
 				li_dom?.forEach((el, i) => {
 					if (headingdata[i]) {
