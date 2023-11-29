@@ -38,6 +38,7 @@ export async function renderHeader(
     let atag = subcontainer.createEl("a");
     atag.addClass("text")
     atag.onclick = function (event) {
+        event.stopPropagation();
         let startline = parseInt(subcontainer.parentElement.getAttribute("data-line")) ?? 0
         if (event.ctrlKey || event.metaKey) {
             foldHeader(view, startline)
@@ -81,20 +82,21 @@ export async function createLi(plugin: FloatingToc, view: MarkdownView, ul_dom: 
     let text_dom = li_dom.createEl("div")
     text_dom.addClass("text-wrap")
     renderHeader(plugin, view, heading.heading, text_dom, view.file.path, null)
-
+ 
     // 如果有子标题则用属性标记，然后在css里用::before显示特殊符号
     if (hasChildHeading(index, plugin.headingdata)) {
-        if (heading.level >= plugin.settings.defaultExpansionLevel + 1) {
+        if (heading.level >= plugin.settings.defaultCollapsedLevel ) {
             li_dom.setAttribute("isCollapsed", "true");
         } else {
             li_dom.setAttribute("isCollapsed", "false");
         }
     }
+    
     // 初始隐藏一定层级的标签
-    if (heading.level > plugin.settings.defaultExpansionLevel + 1) {
+    if (heading.level > plugin.settings.defaultCollapsedLevel ) {
         li_dom.style.display ="none";
     }
-    li_dom.addEventListener("click", () => { toggleCollapse(li_dom); });
+    li_dom.addEventListener("click", (e) => { toggleCollapse(e,li_dom); });
 
     // text.innerHTML = heading.heading
     let line_dom = li_dom.createEl("div")
@@ -207,8 +209,14 @@ export function creatToc(
             });
 
 
-        if (plugin.settings.ignoreTopHeader)
-            plugin.headingdata = app.metadataCache.getFileCache(current_file).headings.slice(1);
+        if (plugin.settings.ignoreHeaders)
+        {
+            let levelsToFilter = plugin.settings.ignoreHeaders.split("\n");
+            plugin.headingdata = app.metadataCache.getFileCache(current_file).headings?.filter(item => !levelsToFilter.includes(item.level.toString()));
+        }
+           // plugin.headingdata = app.metadataCache.getFileCache(current_file).headings.slice(1);
+             
+       
         plugin.headingdata.forEach((heading: HeadingCache, index: number) => {
             const view = app.workspace.getActiveViewOfType(MarkdownView);
             createLi(plugin, view, ul_dom, heading, index);

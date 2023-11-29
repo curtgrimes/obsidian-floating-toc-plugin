@@ -1,8 +1,9 @@
 export default {
+    'ctrl + click on the floating toc to collapse/expand the header.':'ctrl + click on the floating toc to collapse/expand the header.',
     'Floating TOC position':'Floating TOC position',
     'Floating TOC position, default on the left side of the notes':'Floating TOC position, default on the left side of the notes',
-    'Ignore top-level headers':'Ignore top-level headers',
-    'Select whether to ignore the top-level headings. When turned on, the top-level headings in the current note are not displayed in the floating TOC.':'Select whether to ignore the top-level headings. When turned on, the top-level headings in the current note are not displayed in the floating TOC.',    
+    'Hide heading level':'Hide heading level',
+    'Whichever option is selected, the corresponding heading level will be hidden':'Whichever option is selected, the corresponding heading level will be hidden',    
     'Plugin Settings':'Plugin Settings',
     'Default Pin':'Default Pin',
     'Enable Tooltip':'Enable Tooltip',
@@ -14,5 +15,7 @@ export default {
     'Aligned on both sides':'Aligned on both sides',
     'Floating TOC position, on the right side of the notes':'Floating TOC position, on the right side of the notes',
     'whether the text in TOC is left aligned':'whether the text in TOC is left aligned',
-    'When the panel is split left and right, the right side of the layout is aligned right and the left side of the panel is aligned left.':'When the panel is split left and right, the right side of the layout is aligned right and the left side of the panel is aligned left.'
+    'When the panel is split left and right, the right side of the layout is aligned right and the left side of the panel is aligned left.':'When the panel is split left and right, the right side of the layout is aligned right and the left side of the panel is aligned left.',
+    'Set the default collapsed level of headings when initialised':'Set the default collapsed level of headings when initialised',
+    'Default Collapsed Level':'Default Collapsed Levels'
 };

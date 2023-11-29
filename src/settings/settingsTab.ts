@@ -4,7 +4,7 @@ import { POSITION_STYLES } from "src/settings/settingsData";
 import { selfDestruct } from "src/main";
 import { creatToc } from "src/components/floatingtocUI"
 import { t } from 'src/translations/helper';
-
+import { FlowList } from './flow-list';
 
 
 export class FlotingTOCSettingTab extends PluginSettingTab {
@@ -30,7 +30,7 @@ export class FlotingTOCSettingTab extends PluginSettingTab {
     })
     containerEl.createEl("span", { text: "" }).createEl("a", {
       text: "Readme:中文",
-      href: "https://github.com/cumany/obsidian-floating-toc-plugin/blob/master/README-zh_cn.md",
+      href: "https://pkmer.cn/Pkmer-Docs/10-obsidian/obsidian%E7%A4%BE%E5%8C%BA%E6%8F%92%E4%BB%B6/floating-toc/",
     })
     containerEl.createEl("span", { text: "" }).createEl("a", {
       text: "|English  ",
@@ -44,7 +44,7 @@ export class FlotingTOCSettingTab extends PluginSettingTab {
     tips_titleE1.addClass("callout-title")
     tips_titleE1.createEl("br");
     let tips_contentE1 = tipsE1.createEl("div",{
-      text: "ctrl + click on the floating toc to collapse/expand the header."
+      text: t("ctrl + click on the floating toc to collapse/expand the header.")
     })
     tips_contentE1.addClass("callout-content");
  
@@ -95,26 +95,7 @@ export class FlotingTOCSettingTab extends PluginSettingTab {
           }));
     }
 
-    new Setting(containerEl)
-      .setName("Default Expansion Level")
-      .setDesc("Set the default expansion level of headings for newly opened notes")
-      .addDropdown(dropdown => {
-        dropdown.addOptions({
-          '1': '1',
-          '2': '2',
-          '3': '3',
-          '4': '4',
-          '5': '5'
-        });
-        dropdown.setValue(this.plugin.settings.defaultExpansionLevel.toString())
-          .onChange((value) => {
-            this.plugin.settings.defaultExpansionLevel = parseInt(value);
-            this.plugin.saveSettings();
-            setTimeout(() => {
-              dispatchEvent(new Event("refresh-toc"));
-            }, 100);
-          });
-      });
+  
 
     new Setting(containerEl)
       .setName(t('Mobile enabled or not')
@@ -130,21 +111,46 @@ export class FlotingTOCSettingTab extends PluginSettingTab {
             dispatchEvent(new Event("refresh-toc"));
           }, 100);
         }));
-
+        new Setting(containerEl)
+        .setName(t("Default Collapsed Level"))
+        .setDesc(t("Set the default collapsed level of headings when initialised"))
+        .addDropdown(dropdown => {
+          dropdown.addOptions({
+            '1': '1',
+            '2': '2',
+            '3': '3',
+            '4': '4',
+            '5': '5'
+          });
+          dropdown.setValue(this.plugin.settings.defaultCollapsedLevel.toString())
+            .onChange((value) => {
+              this.plugin.settings.defaultCollapsedLevel = parseInt(value);
+              this.plugin.saveSettings();
+              setTimeout(() => {
+                dispatchEvent(new Event("refresh-toc"));
+              }, 100);
+            });
+        });
+        
     new Setting(containerEl)
-      .setName(t('Ignore top-level headers')
+      .setName(t('Hide heading level')
       )
       .setDesc(
-        t("Select whether to ignore the top-level headings. When turned on, the top-level headings in the current note are not displayed in the floating TOC.")
+        t("Whichever option is selected, the corresponding heading level will be hidden")
       )
-      .addToggle(toggle => toggle.setValue(this.plugin.settings?.ignoreTopHeader)
-        .onChange((value) => {
-          this.plugin.settings.ignoreTopHeader = value;
+      let HeadList = new FlowList(containerEl);
+      const headerLevel=[1,2,3,4,5,6]
+      headerLevel.forEach(async (level) => {   
+        let levelsToFilter = this.plugin.settings.ignoreHeaders.split("\n");
+        let isChecked = levelsToFilter.includes(level.toString()); //默认忽略第1级
+        HeadList.addItem(level.toString(), level.toString(), isChecked, (value) => {
+          this.plugin.settings.ignoreHeaders = HeadList.checkedList.join('\n');
           this.plugin.saveSettings();
           setTimeout(() => {
             dispatchEvent(new Event("refresh-toc"));
           }, 100);
-        }));
+        });
+      });   
     new Setting(containerEl)
       .setName(t('Default Pin')
       )

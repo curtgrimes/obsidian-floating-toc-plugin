@@ -6,7 +6,11 @@
 重构插件，使得插件体积大幅度减少（只有原来的三十分之一），功能增加，性能提高。
 
 
- ![](https://ghproxy.com/https://raw.githubusercontent.com/cumany/cumany/main/pic/202209171712621.gif)
+ ![](https://raw.githubusercontent.com/cumany/cumany/main/pic/202209171712621.gif)
+
+## 交流群
+ 有问题 在群里反馈：QQ 825255377
+ 中文教程 https://pkmer.cn/Pkmer-Docs/10-obsidian/obsidian%E7%A4%BE%E5%8C%BA%E6%8F%92%E4%BB%B6/floating-toc/
 
 ## 用style setting 插件 开启更多外观设置
 
@@ -14,13 +18,12 @@
 
 ## 如何安装
 
-1.  brat 安装。插件目前还没有上架官方商店可以通过  [BRAT Plugin](https://obsidian.md/plugins?id=obsidian42-brat)去安装。
-    `cumany/obsidian-floating-toc-plugin`
+1.  国内推荐使用 PKmer 商店安装，[Pkmer市场](https://pkmer.cn/products/plugin/pluginMarket/?floating-toc)
 
 2.  所有的插件手动安装方法都是一样的，本插件也不例外。 
     在[releases](https://github.com/cumany/obsidian-floating-toc-plugin/releases) 下载 `main.js` `mainfest.json` `styles.css` 三个文件
     在Obsidian库目录下的 `.obsidian\plugins\` 新建一个插件目录名字`obsidian-floating-toc`文件夹。把刚才下载的三个文件放进去。
-     ![](https://ghproxy.com/https://raw.githubusercontent.com/cumany/cumany/main/pic/202209221439471.png)
+     ![](https://raw.githubusercontent.com/cumany/cumany/main/pic/202209221439471.png)
     最后在obsidian中开启本插件即可。
 3.   参考教程
     [Plugins mini FAQ ](https://forum.obsidian.md/t/plugins-mini-faq/7737)
@@ -50,5 +53,5 @@
 Thank you very much for your support!
 
 <div align="center">
-<img src="https://ghproxy.com/https://raw.githubusercontent.com/cumany/cumany/main/pic/202209192228895.png" width="400px">
+<img src="https://ghproxy.net/https://raw.githubusercontent.com/cumany/cumany/main/pic/202209192228895.png" width="400px">
 </div>

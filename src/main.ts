@@ -32,9 +32,15 @@ export function refresh_node(plugin: FloatingToc, view: MarkdownView) {
 			ul_dom = float_toc_dom.createEl("ul"), ul_dom.addClass("floating-toc")
 		let li_dom = float_toc_dom?.querySelectorAll("li.heading-list-item")
 		let headingdata = plugin.headingdata
-		//console.log(headingdata,"headingdata")
+		console.log(headingdata,"headingdata")
+		if (plugin.settings.ignoreHeaders)
+        {
+            let levelsToFilter = plugin.settings.ignoreHeaders.split("\n");
+            headingdata = plugin.headingdata?.filter((item: { level: { toString: () => string; }; }) => !levelsToFilter.includes(item.level.toString()));
+        }
+		console.log(headingdata,"headingdata2")
 		if (headingdata) {
-			//	console.log("refresh_node")
+			console.log("refresh_node")
 			if (li_dom.length >= headingdata.length) {
 				li_dom?.forEach((el, i) => {
 					if (headingdata[i]) {
@@ -283,9 +289,12 @@ export default class FloatingToc extends Plugin {
 						cleanheading.push(item)
 					})
 					this.headingdata = cleanheading;
-					if (this.settings.ignoreTopHeader)
-						this.headingdata = heading.slice(1);
-
+				 
+						if (this.settings.ignoreHeaders)
+						{
+							let levelsToFilter = this.settings.ignoreHeaders.split("\n");
+							this.headingdata = heading.filter(item => !levelsToFilter.includes(item.level.toString()));
+						}
 					refresh(view);
 				}
 			}
@@ -326,9 +335,11 @@ export default class FloatingToc extends Plugin {
 					//	console.log("refresh")
 
 					this.headingdata = cleanheading;
-
-					if (this.settings.ignoreTopHeader)
-						this.headingdata = cleanheading.slice(1);
+					if (this.settings.ignoreHeaders)
+					{
+						let levelsToFilter = this.settings.ignoreHeaders.split("\n");
+						this.headingdata = heading.filter(item => !levelsToFilter.includes(item.level.toString()));
+					}
 					refresh(view)
 				}
 			}
