@@ -11,7 +11,8 @@ export interface FlotingTOCSetting {
   isLeft:boolean;
   isDefaultPin:boolean;
   isTooltip:boolean;
-  defaultCollapsedLevel:number
+  defaultCollapsedLevel:number;
+  expandAllSubheadings: boolean;
 }
 
 export const DEFAULT_SETTINGS: FlotingTOCSetting = {
@@ -22,5 +23,6 @@ export const DEFAULT_SETTINGS: FlotingTOCSetting = {
   isLeft: false,
   isDefaultPin: false,
   isTooltip: false,
-  defaultCollapsedLevel: 6
+  defaultCollapsedLevel: 6,
+  expandAllSubheadings: true,
 };

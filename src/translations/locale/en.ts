@@ -17,5 +17,7 @@ export default {
     'whether the text in TOC is left aligned':'whether the text in TOC is left aligned',
     'When the panel is split left and right, the right side of the layout is aligned right and the left side of the panel is aligned left.':'When the panel is split left and right, the right side of the layout is aligned right and the left side of the panel is aligned left.',
     'Set the default collapsed level of headings when initialised':'Set the default collapsed level of headings when initialised',
-    'Default Collapsed Level':'Default Collapsed Levels'
+    'Default Collapsed Level':'Default Collapsed Levels',
+    'Expand All Subheadings Recursively': 'Expand All Subheadings Recursively',
+    'When disabled, only direct subheadings will be expanded': 'When disabled, only direct subheadings will be expanded'
 };

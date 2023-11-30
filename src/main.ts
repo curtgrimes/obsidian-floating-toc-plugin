@@ -84,7 +84,7 @@ export function refresh_node(plugin: FloatingToc, view: MarkdownView) {
 							if (level > plugin.settings.defaultCollapsedLevel) {
 								el.style.display = "none";
 							}
-							el.addEventListener("click", (e) => { toggleCollapse(e, el); });
+							el.addEventListener("click", (e) => { toggleCollapse(e, el, plugin.settings.expandAllSubheadings); });
 
 							return;
 						}
@@ -147,7 +147,7 @@ export function refresh_node(plugin: FloatingToc, view: MarkdownView) {
 							if (el.level > plugin.settings.defaultCollapsedLevel) {
 								li_dom[i].style.display = "none";
 							}
-							li_dom[i].addEventListener("click", (e) => { toggleCollapse(e, li_dom[i]); });
+							li_dom[i].addEventListener("click", (e) => { toggleCollapse(e, li_dom[i], plugin.settings.expandAllSubheadings); });
 
 							return;
 						}
