@@ -23,6 +23,23 @@ export async function renderHeader(
         prelist = m[0]
         source = source.replace(regex2, '');
     }
+    const index = Number(container.parentElement.getAttribute("data-id"));
+    const level = Number(container.parentElement.getAttribute("data-level"));
+    // 如果有子标题则用属性标记，然后在css里用::before显示特殊符号
+    if (hasChildHeading(index, plugin.headingdata)) {
+    
+        if (level >= plugin.settings.defaultCollapsedLevel) {
+            container.parentElement.setAttribute("isCollapsed", "true");
+        } else {
+            container.parentElement.setAttribute("isCollapsed", "false");
+        }
+    }
+
+    // 初始隐藏一定层级的标签
+    if (level > plugin.settings.defaultCollapsedLevel) {
+        container.parentElement.style.display = "none";
+    }
+    container.parentElement.addEventListener("click", (e) => { toggleCollapse(e, container.parentElement); });
 
     let subcontainer = container
     await MarkdownRenderer.renderMarkdown(
@@ -33,6 +50,7 @@ export async function renderHeader(
     );
     if (subcontainer) { // heading-list-item .div 里面的标题渲染完毕, 可以显示伪元素了
         subcontainer.classList.add('heading-rendered');
+
     }
 
     let atag = subcontainer.createEl("a");
@@ -82,21 +100,21 @@ export async function createLi(plugin: FloatingToc, view: MarkdownView, ul_dom: 
     let text_dom = li_dom.createEl("div")
     text_dom.addClass("text-wrap")
     renderHeader(plugin, view, heading.heading, text_dom, view.file.path, null)
- 
-    // 如果有子标题则用属性标记，然后在css里用::before显示特殊符号
-    if (hasChildHeading(index, plugin.headingdata)) {
-        if (heading.level >= plugin.settings.defaultCollapsedLevel ) {
-            li_dom.setAttribute("isCollapsed", "true");
-        } else {
-            li_dom.setAttribute("isCollapsed", "false");
-        }
-    }
-    
-    // 初始隐藏一定层级的标签
-    if (heading.level > plugin.settings.defaultCollapsedLevel ) {
-        li_dom.style.display ="none";
-    }
-    li_dom.addEventListener("click", (e) => { toggleCollapse(e,li_dom); });
+
+    // // 如果有子标题则用属性标记，然后在css里用::before显示特殊符号
+    // if (hasChildHeading(index, plugin.headingdata)) {
+    //     if (heading.level >= plugin.settings.defaultCollapsedLevel ) {
+    //         li_dom.setAttribute("isCollapsed", "true");
+    //     } else {
+    //         li_dom.setAttribute("isCollapsed", "false");
+    //     }
+    // }
+
+    // // 初始隐藏一定层级的标签
+    // if (heading.level > plugin.settings.defaultCollapsedLevel ) {
+    //     li_dom.style.display ="none";
+    // }
+    // li_dom.addEventListener("click", (e) => { toggleCollapse(e,li_dom); });
 
     // text.innerHTML = heading.heading
     let line_dom = li_dom.createEl("div")
@@ -209,14 +227,13 @@ export function creatToc(
             });
 
 
-        if (plugin.settings.ignoreHeaders)
-        {
+        if (plugin.settings.ignoreHeaders) {
             let levelsToFilter = plugin.settings.ignoreHeaders.split("\n");
             plugin.headingdata = app.metadataCache.getFileCache(current_file).headings?.filter(item => !levelsToFilter.includes(item.level.toString()));
         }
-           // plugin.headingdata = app.metadataCache.getFileCache(current_file).headings.slice(1);
-             
-       
+        // plugin.headingdata = app.metadataCache.getFileCache(current_file).headings.slice(1);
+
+
         plugin.headingdata.forEach((heading: HeadingCache, index: number) => {
             const view = app.workspace.getActiveViewOfType(MarkdownView);
             createLi(plugin, view, ul_dom, heading, index);

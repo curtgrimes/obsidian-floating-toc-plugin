@@ -120,7 +120,8 @@ export class FlotingTOCSettingTab extends PluginSettingTab {
             '2': '2',
             '3': '3',
             '4': '4',
-            '5': '5'
+            '5': '5',
+            '6': 'None'
           });
           dropdown.setValue(this.plugin.settings.defaultCollapsedLevel.toString())
             .onChange((value) => {

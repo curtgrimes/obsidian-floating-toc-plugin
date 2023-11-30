@@ -1,6 +1,6 @@
 // 判断是否存在子标题
 export function hasChildHeading(headingIndex: number, allHeadings: any) {
-   
+
     return headingIndex + 1 < allHeadings.length 
             ?  allHeadings[headingIndex + 1].level > allHeadings[headingIndex].level
             : false;
