@@ -39,7 +39,7 @@ export async function renderHeader(
     if (level > plugin.settings.defaultCollapsedLevel) {
         container.parentElement.style.display = "none";
     }
-    container.parentElement.addEventListener("click", (e) => { toggleCollapse(e, container.parentElement); });
+    container.parentElement.addEventListener("click", (e) => { toggleCollapse(e, container.parentElement, plugin.settings.expandAllSubheadings); });
 
     let subcontainer = container
     await MarkdownRenderer.renderMarkdown(

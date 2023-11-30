@@ -18,5 +18,7 @@ export default {
   'Aligned on both sides':'两端对齐',
   'When the panel is split left and right, the right side of the layout is aligned right and the left side of the panel is aligned left.':'当面板左右分割的时候，右侧版面右对齐，左侧面板左对齐。',
   'Set the default collapsed level of headings when initialised':'设置初始化时TOC中默认折叠的标题级别',
-  'Default Collapsed Level':'默认折叠级别'
+  'Default Collapsed Level':'默认折叠级别', 
+  'Expand All Subheadings Recursively': '递归展开所有子标题',
+  'When disabled, only direct subheadings will be expanded': '关闭此选项时, 只展开直接子标题'
 };
