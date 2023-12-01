@@ -569,6 +569,7 @@ body.enable-heading-nowrap .heading-list-item .text-wrap .text {
   min-height: max-content;
   max-height: calc(100% - 135px) ;
   left:var(--floating-toc-position);
+  padding-top: 0.5rem;
 }
 
 .floating-toc-div.pin .floating-toc,
@@ -626,17 +627,15 @@ body.enable-heading-nowrap .floating-toc:hover .heading-list-item>.text-wrap {
 
 }
 
-.workspace-leaf-content .floating-toc-div.pin:is(.floating-left,.floating-both)+.markdown-source-view .cm-editor {
+/* .workspace-leaf-content .floating-toc-div.pin:is(.floating-left,.floating-both)+.markdown-source-view .cm-editor {
   padding-left: 2rem;
  
-}
+} */
 
-.workspace-leaf-content .floating-toc-div.pin:is(.floating-left,.floating-both)~.markdown-reading-view .markdown-preview-view {
-  padding-left: 4rem;
-}
+ 
 
 .workspace-leaf-content .floating-toc-div:is(.floating-left,.floating-both)+.markdown-source-view .cm-editor {
-  padding-left: 2rem;
+  padding-left:  2rem;
 }
 
 .workspace-leaf-content .floating-toc-div:is(.floating-left,.floating-both)~.markdown-reading-view .markdown-preview-view {
@@ -835,7 +834,7 @@ body.enable-background-blur-dept .floating-toc:hover {
 
 /****alignLeft**/
 
-.floating-toc-div.floating-right.alignLeft.hover .floating-toc {
+.floating-toc-div.floating-right.alignLeft .floating-toc {
  
     align-items: flex-start;
 }

@@ -112,27 +112,27 @@ export class FlotingTOCSettingTab extends PluginSettingTab {
           }, 100);
         }));
 
-    new Setting(containerEl)
-    .setName(t("Default Collapsed Level"))
-    .setDesc(t("Set the default collapsed level of headings when initialised"))
-    .addDropdown(dropdown => {
-      dropdown.addOptions({
-        '1': '1',
-        '2': '2',
-        '3': '3',
-        '4': '4',
-        '5': '5',
-        '6': 'None'
-      });
-      dropdown.setValue(this.plugin.settings.defaultCollapsedLevel.toString())
-        .onChange((value) => {
-          this.plugin.settings.defaultCollapsedLevel = parseInt(value);
-          this.plugin.saveSettings();
-          setTimeout(() => {
-            dispatchEvent(new Event("refresh-toc"));
-          }, 100);
-        });
-    });
+    // new Setting(containerEl)
+    // .setName(t("Default Collapsed Level"))
+    // .setDesc(t("Set the default collapsed level of headings when initialised"))
+    // .addDropdown(dropdown => {
+    //   dropdown.addOptions({
+    //     '1': '1',
+    //     '2': '2',
+    //     '3': '3',
+    //     '4': '4',
+    //     '5': '5',
+    //     '6': 'None'
+    //   });
+    //   dropdown.setValue(this.plugin.settings.defaultCollapsedLevel.toString())
+    //     .onChange((value) => {
+    //       this.plugin.settings.defaultCollapsedLevel = parseInt(value);
+    //       this.plugin.saveSettings();
+    //       setTimeout(() => {
+    //         dispatchEvent(new Event("refresh-toc"));
+    //       }, 100);
+    //     });
+    // });
 
     new Setting(containerEl)
     .setName(t("Expand All Subheadings Recursively"))

@@ -7,6 +7,7 @@ export function hasChildHeading(headingIndex: number, allHeadings: any) {
 
 export function toggleCollapse(e: MouseEvent, li: HTMLElement, doExpandAll: boolean) {
     e.stopPropagation();
+ 
     const isCollapsed = li.getAttribute("isCollapsed");
  
     if (isCollapsed !== null) {
@@ -19,7 +20,7 @@ export function toggleCollapse(e: MouseEvent, li: HTMLElement, doExpandAll: bool
   }
   
   // 展开当前标题的子标题
-  function expandHeading(liElement: HTMLElement, doExpandAll: boolean) {
+  export function expandHeading(liElement: HTMLElement, doExpandAll: boolean) {
     liElement.setAttribute("isCollapsed", "false");
     const rootLevel = parseInt(liElement.getAttribute("data-level"));
     let curr = liElement.nextElementSibling as HTMLElement;
@@ -59,7 +60,7 @@ export function toggleCollapse(e: MouseEvent, li: HTMLElement, doExpandAll: bool
 
 
   // 折叠所有子标题
-  function collapseHeading(liElement: HTMLElement) {
+  export function collapseHeading(liElement: HTMLElement) {
     liElement.setAttribute("isCollapsed", "true");
   
     const rootLevel = parseInt(liElement.getAttribute("data-level"));

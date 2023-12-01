@@ -26,6 +26,7 @@ export function selfDestruct() {
 	});
 }
 
+
 export function refresh_node(plugin: FloatingToc, view: MarkdownView) {
 	requireApiVersion("0.15.0")
 		? (activeDocument = activeWindow.document)
@@ -33,7 +34,7 @@ export function refresh_node(plugin: FloatingToc, view: MarkdownView) {
 	//let currentleaf = activeDocument?.querySelector(".workspace-leaf.mod-active");
 	//let view=plugin.app.workspace.getActiveViewOfType(MarkdownView)
 	let float_toc_dom = view.contentEl?.querySelector(".floating-toc-div");
-	//console.log(float_toc_dom,"float_toc_dom")
+
 	if (float_toc_dom) {
 		let ul_dom = float_toc_dom.querySelector(
 			"ul.floating-toc"
@@ -41,7 +42,7 @@ export function refresh_node(plugin: FloatingToc, view: MarkdownView) {
 		if (!ul_dom)
 			(ul_dom = float_toc_dom.createEl("ul")),
 				ul_dom.addClass("floating-toc");
-		let li_dom = float_toc_dom?.querySelectorAll("li.heading-list-item");
+		let li_dom = float_toc_dom?.querySelectorAll("li.heading-list-item") as NodeListOf<HTMLElement>;
 		let headingdata = plugin.headingdata;
 
 		if (plugin.settings.ignoreHeaders) {
@@ -64,31 +65,25 @@ export function refresh_node(plugin: FloatingToc, view: MarkdownView) {
 							headingdata[i].position.start.line ==
 							el.getAttribute("data-line")
 						) {
-							//级别，内容行号完全一致就不需要更新。
-							const index = Number(el.getAttribute("data-id"));
-							const level = Number(el.getAttribute("data-level"));
-							// 如果有子标题则用属性标记，然后在css里用::before显示特殊符号
-							if (hasChildHeading(index, plugin.headingdata)) {
+						 
+							//级别，内容行号完全一致
 
-								if (level >= plugin.settings.defaultCollapsedLevel) {
-									el.setAttribute("isCollapsed", "true");
-								} else {
-									el.setAttribute("isCollapsed", "false");
+							const index = Number(el.getAttribute("data-id"));
+
+							if (hasChildHeading(index, plugin.headingdata)) {
+								{
+									if (!el.hasAttribute("iscollapsed")) {
+										el.setAttribute("isCollapsed", "false");
+									}
 								}
 							} else {
-								if (el.hasAttribute("isCollapsed"))
+								if (el.hasAttribute("iscollapsed")) {
 									el.removeAttribute("isCollapsed");
+								}
 							}
-
-							// 初始隐藏一定层级的标签
-							if (level > plugin.settings.defaultCollapsedLevel) {
-								el.style.display = "none";
-							}
-							el.addEventListener("click", (e) => { toggleCollapse(e, el, plugin.settings.expandAllSubheadings); });
 
 							return;
-						}
-						else {
+						} else {
 							el.setAttribute(
 								"data-level",
 								headingdata[i].level.toString()
@@ -99,6 +94,7 @@ export function refresh_node(plugin: FloatingToc, view: MarkdownView) {
 								headingdata[i].position.start.line.toString()
 							);
 							el.children[0].querySelector("a")?.remove();
+						 
 							renderHeader(
 								plugin,
 								view,
@@ -125,33 +121,30 @@ export function refresh_node(plugin: FloatingToc, view: MarkdownView) {
 								.innerText &&
 							el.position.start.line.toString() ==
 							li_dom[i].getAttribute("data-line")
-						)
-						//级别，内容行号完全一致就不需要更新。
-						{
-							const index = Number(li_dom[i].getAttribute("data-id"));
+						) {
+							//级别，内容行号完全一致就不需要更新。
+						 
+							const index = Number(
+								li_dom[i].getAttribute("data-id")
+							);
 
-							// 如果有子标题则用属性标记，然后在css里用::before显示特殊符号
 							if (hasChildHeading(index, plugin.headingdata)) {
+								if (!li_dom[i].hasAttribute("iscollapsed"))
+									li_dom[i].setAttribute(
+										"isCollapsed",
+										"false"
+									);
 
-								if (el.level >= plugin.settings.defaultCollapsedLevel) {
-									li_dom[i].setAttribute("isCollapsed", "true");
-								} else {
-									li_dom[i].setAttribute("isCollapsed", "false");
-								}
 							} else {
-								if (li_dom[i].hasAttribute("isCollapsed"))
-									li_dom[i].removeAttribute("isCollapsed");
-							}
+								if (li_dom[i].hasAttribute("iscollapsed"))
+									li_dom[i].removeAttribute(
+										"isCollapsed"
+									);
 
-							// 初始隐藏一定层级的标签
-							if (el.level > plugin.settings.defaultCollapsedLevel) {
-								li_dom[i].style.display = "none";
 							}
-							li_dom[i].addEventListener("click", (e) => { toggleCollapse(e, li_dom[i], plugin.settings.expandAllSubheadings); });
 
 							return;
-						}
-						else {
+						} else {
 							li_dom[i].setAttribute(
 								"data-level",
 								el.level.toString()
@@ -163,6 +156,7 @@ export function refresh_node(plugin: FloatingToc, view: MarkdownView) {
 							);
 							//(li_dom[i].children[0] as HTMLElement).innerHTML = '<a class="text">' + el.heading + '</a>'
 							li_dom[i].children[0].querySelector("a")?.remove();
+						 
 							renderHeader(
 								plugin,
 								view,

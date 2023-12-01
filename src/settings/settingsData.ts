@@ -24,5 +24,5 @@ export const DEFAULT_SETTINGS: FlotingTOCSetting = {
   isDefaultPin: false,
   isTooltip: false,
   defaultCollapsedLevel: 6,
-  expandAllSubheadings: true,
+  expandAllSubheadings: false,
 };
