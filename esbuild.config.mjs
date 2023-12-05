@@ -57,7 +57,7 @@ try {
 		sourcemap: prod ? false : 'inline',
 		treeShaking: true,
 		// outfile: './build/main.js',
-		outfile: './main.js', // Utilizes the hot-reload plugin for dynamic reloading. See https://github.com/pjeby/hot-reload for details.
+		outfile: './build/main.js', // Utilizes the hot-reload plugin for dynamic reloading. See https://github.com/pjeby/hot-reload for details.
 
 	});
 	//renameCSSFile();
