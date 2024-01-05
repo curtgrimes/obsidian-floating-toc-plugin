@@ -65,7 +65,7 @@ export function refresh_node(plugin: FloatingToc, view: MarkdownView) {
 							headingdata[i].position.start.line ==
 							el.getAttribute("data-line")
 						) {
-						 
+
 							//级别，内容行号完全一致
 
 							const index = Number(el.getAttribute("data-id"));
@@ -94,7 +94,7 @@ export function refresh_node(plugin: FloatingToc, view: MarkdownView) {
 								headingdata[i].position.start.line.toString()
 							);
 							el.children[0].querySelector("a")?.remove();
-						 
+
 							renderHeader(
 								plugin,
 								view,
@@ -123,7 +123,7 @@ export function refresh_node(plugin: FloatingToc, view: MarkdownView) {
 							li_dom[i].getAttribute("data-line")
 						) {
 							//级别，内容行号完全一致就不需要更新。
-						 
+
 							const index = Number(
 								li_dom[i].getAttribute("data-id")
 							);
@@ -156,7 +156,7 @@ export function refresh_node(plugin: FloatingToc, view: MarkdownView) {
 							);
 							//(li_dom[i].children[0] as HTMLElement).innerHTML = '<a class="text">' + el.heading + '</a>'
 							li_dom[i].children[0].querySelector("a")?.remove();
-						 
+
 							renderHeader(
 								plugin,
 								view,
@@ -408,6 +408,44 @@ export default class FloatingToc extends Plugin {
 							floatingTocWrapper.removeClass("hide");
 						else floatingTocWrapper.addClass("hide");
 					}
+				}
+			},
+		});
+		this.addCommand({
+			id: "scroll-to-bottom",
+			name: "Scroll to Bottom",
+			icon: "double-down-arrow-glyph",
+			callback: async () => {
+				const view =
+					this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (view) {
+
+
+					const file = this.app.workspace.getActiveFile()
+					const content = await (this.app as any).vault.cachedRead(file);
+					const lines = content.split('\n');
+					let numberOfLines = lines.length;
+					//in preview mode don't count empty lines at the end
+					if (view.getMode() === 'preview') {
+						while (numberOfLines > 0 && lines[numberOfLines - 1].trim() === '') {
+							numberOfLines--;
+						}
+					}
+					view.currentMode.applyScroll((numberOfLines - 1))
+
+
+				}
+			},
+		});
+		this.addCommand({
+			id: "scroll-to-top",
+			name: "Scroll to Top",
+			icon: "double-up-arrow-glyph",
+			callback: async () => {
+				const view =
+					this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (view) {
+					view.setEphemeralState({ scroll: 0 });
 				}
 			},
 		});
