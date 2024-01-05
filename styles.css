@@ -432,7 +432,7 @@ body.enable-heading-nowrap .floating-toc-div.pin .floating-toc .heading-list-ite
   max-width: unset;
 }
 body.enable-heading-nowrap .heading-list-item .text-wrap .text {
-  max-width: calc(var(--floating-toc-line-width) - 1rem);
+  max-width: calc(var(--floating-toc-line-width) - 3rem);
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -634,9 +634,14 @@ body.enable-heading-nowrap .floating-toc:hover .heading-list-item>.text-wrap {
 
  
 
-.workspace-leaf-content .floating-toc-div:is(.floating-left,.floating-both)+.markdown-source-view .cm-editor {
+.workspace-leaf-content .floating-toc-div:is(.floating-left,.floating-both)+.markdown-source-view>.cm-editor {
   padding-left:  2rem;
 }
+
+.workspace-leaf-content .floating-toc-div.pin:is(.floating-left,.floating-both)+.markdown-source-view>.cm-editor {
+  padding-left:  var(--floating-toc-line-width);
+}
+
 
 .workspace-leaf-content .floating-toc-div:is(.floating-left,.floating-both)~.markdown-reading-view .markdown-preview-view {
   padding-left: 4rem;
@@ -806,7 +811,7 @@ animation: shake 0.5s 2 alternate linear; /* 设置动画为2秒钟的时间，�
 }
 
 
-body.enable-background-blur-dept .workspace-leaf-content .floating-toc-div.hover:not(.pin)+.markdown-source-view .cm-editor
+body.enable-background-blur-dept .workspace-leaf-content .floating-toc-div.hover:not(.pin)+.markdown-source-view>.cm-editor
 {
   
   filter: blur(var(--background-blur-depth));
@@ -990,7 +995,7 @@ margin-left: 0.2rem;
 }
 /**垂直分割后第二个tabs*/
 
-.workspace-split.mod-vertical > .workspace-tabs ~.workspace-tabs .floating-toc-div.floating-both + .markdown-source-view .cm-editor {
+.workspace-split.mod-vertical > .workspace-tabs ~.workspace-tabs .floating-toc-div.floating-both + .markdown-source-view>.cm-editor {
   padding-right: 2rem;
   padding-left: 0;
 }
@@ -1416,7 +1421,7 @@ body.float-outline-style
     position: absolute;
     width: 1em; 
     margin-left: -0.9em; /* 向左偏移自身宽度，使伪元素不占用.text-wrap的空间 */
-    pading-right: 0.5rem;
+    padding-right: 0.5rem;
     z-index: 2;
     left: 0; /* 使伪元素位于li的最左边 */
     top: 50%; /* 垂直居中 */
@@ -1432,7 +1437,7 @@ body.float-outline-style
     position: absolute;
     width: 1em; 
     margin-left: -0.9em; 
-    pading-right: 0.5rem;
+    padding-right: 0.5rem;
     z-index: 2;
     left: 0; 
     top: 50%; 
